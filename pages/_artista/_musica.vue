@@ -1,5 +1,5 @@
 <template>
-  <b-container>Artistas</b-container>
+  <h1>Música</h1>
 </template>
 
 <script>

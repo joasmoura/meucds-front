@@ -9,7 +9,6 @@ export default {
   }),
   created () {
     const letra = this.$route.params.letra
-    console.log(this.$route.params.letra)
     if (letra !== 'letra') {
       this.letra = letra
     }

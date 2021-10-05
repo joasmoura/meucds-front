@@ -1,6 +1,6 @@
 <template>
 <div>
-  <b-navbar toggleable="lg" type="light" variant="light">
+  <b-navbar toggleable="lg" type="light" variant="light" class="navbar-topo">
     <b-container fluid="sm">
       <b-navbar-brand to="/" title="Págiina inicial do Meu Cds">
         <b-img :src="require('../static/meucds-logomarca.png')" width="150px" alt="Logo Meu Cds"></b-img>
@@ -27,9 +27,9 @@
     </b-container>
   </b-navbar>
 
+  <player />
   <Nuxt />
-
-  <footer>
+  <footer class="d-block">
     <b-container fluid class="p-0 bg-light">
       <b-container fluid="sm">
         <div class="d-flex justify-content-between py-1 lista-alfabeto flex-wrap">
@@ -98,7 +98,74 @@
 </div>
 </template>
 
+<script>
+import Player from '@/components/Player'
+export default {
+  data () {
+    return {
+    }
+  },
+  created () {
+    this.getCategorias()
+    this.musicasPadrao()
+  },
+  components: {
+    Player
+  },
+  scrollToTop: true,
+  methods: {
+    async getCategorias () {
+      const url = this.$nuxt._route.path
+
+      await this.$axios.get('categorias').then((r) => {
+        const categorias = r.data
+        if (categorias) {
+          categorias.map((c, i) => {
+            this.$store.commit('categorias/add', {
+              nome: c.nome,
+              url: c.url,
+              mostra: (i <= 4),
+              active: (url === '/categoria' + c.url || url === '/artistas-top' + c.url)
+            })
+
+            return c
+          })
+        }
+      })
+    },
+    musicasPadrao () {
+      const musicas = this.$store.state.reproduzindo.list
+
+      if (!musicas.length) {
+        const sources = [
+          {
+            src: 'https://www.meucds.com/musicas/TAYRONE%20AGOSTO%202020/1-EDILENE%20(IN%C3%89DITA).mp3',
+            type: 'audio/mp3',
+            nome: 'Edilene'
+          },
+          {
+            src: 'http://localhost/meucds/storage/musicas/FARRA%20DE%20QUALIDADE/01%20VAPO%20CHAPULETEI.mp3',
+            type: 'audio/mp3',
+            nome: 'Meu parceiro'
+          }
+        ]
+
+        sources.forEach((s) => {
+          this.$store.commit('reproduzindo/add', s)
+        })
+      }
+    }
+
+  }
+}
+</script>
+
 <style>
+  .navbar-topo{
+    background: #252323 !important;
+    padding: 4px;
+  }
+
   .input-busca{width: 500px !important; border-radius:5px;}
   .botao-up{background: #00C5A2; border:none; border-radius:20px;}
   .botao-up:hover{background: #02AE8F; }
@@ -107,8 +174,9 @@
   .btn-divulgue{color:#FFF !important;}
 
   .link-nav-topo a{
-    color:#242222 !important;
-    font-weight: bold;
+    color:#fff !important;
+    font-weight: 600;
+    font-size: 14px;
   }
 
   .links-rodape a {
