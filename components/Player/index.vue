@@ -61,7 +61,9 @@
           <b-col md="4">
             <div v-show="showPlayerGeral" class="box-player-geral">
               <vue-plyr ref="plyr" >
-                <audio controls preload playsinline :src="this.$store.state.reproduzindo.currentAudio.src"></audio>
+                <audio controls preload playsinline >
+                  <source :src="this.$store.state.reproduzindo.currentAudio.src" :type="this.$store.state.reproduzindo.currentAudio.type">
+                </audio>
               </vue-plyr>
             </div>
           </b-col>
