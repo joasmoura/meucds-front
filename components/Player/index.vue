@@ -1,6 +1,5 @@
 <template>
   <b-navbar
-    v-if="this.$store.state.reproduzindo.currentAudio"
      toggleable="lg"
      type="dark"
      variant="dark"
@@ -62,7 +61,7 @@
             <div v-show="showPlayerGeral" class="box-player-geral">
               <vue-plyr ref="plyr" >
                 <audio controls preload playsinline >
-                  <!-- <source :src="this.$store.state.reproduzindo.currentAudio.src" :type="this.$store.state.reproduzindo.currentAudio.type" /> -->
+                  <source :src="this.$store.state.reproduzindo.currentAudio.src" :type="this.$store.state.reproduzindo.currentAudio.type" />
                 </audio>
               </vue-plyr>
             </div>
