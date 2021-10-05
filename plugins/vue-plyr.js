@@ -4,6 +4,5 @@ import 'vue-plyr/dist/vue-plyr.css'
 
 Vue.use(VuePlyr, {
   plyr: {
-    debug: true
   }
 })
