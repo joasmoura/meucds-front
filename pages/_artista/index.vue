@@ -26,7 +26,7 @@
 
   <b-container class="bg-white">
     <b-nav pills>
-      <b-nav-item>Cds</b-nav-item>
+      <b-nav-item :to="`${uri}/albuns`">Albuns</b-nav-item>
       <b-nav-item>Vídeos</b-nav-item>
     </b-nav>
   </b-container>
