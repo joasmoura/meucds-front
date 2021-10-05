@@ -150,13 +150,13 @@ export default {
       this.player.autoplay = true
 
       console.log(playPromise)
-      if (playPromise !== undefined) {
-        playPromise.then((_) => {
-          this.pause()
-        }).catch((error) => {
-          console.log(error)
-        })
-      }
+      // if (playPromise !== undefined) {
+      //   playPromise.then((_) => {
+      //     this.pause()
+      //   }).catch((error) => {
+      //     console.log(error)
+      //   })
+      // }
       if (this.player.playing) {
         this.reproduzindo = true
         this.duracao = this.player.duration
