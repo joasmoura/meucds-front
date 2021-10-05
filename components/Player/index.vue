@@ -130,7 +130,7 @@ export default {
       }
       this.update()
       if (this.player.playing) {
-        this.player.play()
+        this.play()
       }
     },
     prev () {
@@ -142,11 +142,12 @@ export default {
       this.update()
 
       if (this.player.playing) {
-        this.player.play()
+        this.play()
       }
     },
     play () {
-      const playPromise = this.player.play()
+      // const playPromise = this.player.play()
+      const playPromise = this.$refs.plyr.player.play()
       this.player.autoplay = true
 
       console.log(playPromise)
