@@ -7,13 +7,13 @@
         <span v-if="(key+1 < 10 ? '0' : '')" class="p-4">0{{key+1}}</span>
         <span v-else class="p-4">{{key+1}}</span>
 
-        <b-button :id="`musica-${key}`" class="botaoPlay" @click="ouvir(musica.id)">
+        <b-button :id="`musica-${key}`" class="botaoPlay" @click="ouvir(musica.id)" v-b-tooltip.hover :title="`Escutar ${titulos(musica.nome)}`">
           <b-icon icon="play-fill"></b-icon>
         </b-button>
       </div>
 
-      <b-link :to="`${uri}/${musica.url}`" class="d-block" size="sm">
-        {{musica.nome}}
+      <b-link :to="`${uri}/${musica.url}`" class="d-block w-100 text-center nome" size="sm">
+        {{titulos(musica.nome)}}
       </b-link>
 
       <div>
@@ -21,6 +21,7 @@
           <template #button-content>
            <b-icon icon="three-dots-vertical"></b-icon>
           </template>
+
           <b-dropdown-item :href="`${musica.link_musica}`">Baixar</b-dropdown-item>
         </b-dropdown>
       </div>
@@ -70,12 +71,28 @@ export default {
         })
         this.$nuxt.$emit('novareproducao')
       }
+    },
+    titulos (t) {
+      if (t !== '') {
+        return t.split(' ')
+          .map(word => (word[0] ? word[0].toUpperCase() : '') + word.slice(1).toLowerCase())
+          .join(' ')
+      }
     }
   }
 }
 </script>
 
 <style>
+  .nome{
+    color: #555;
+  }
+
+  .nome:hover{
+    color: #00c5a2;
+    text-decoration: none;
+  }
+
   .musica{
     border:none;
     border-bottom: 0.3px solid #f2f2f2;
