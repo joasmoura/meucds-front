@@ -62,7 +62,7 @@
             <div v-show="showPlayerGeral" class="box-player-geral">
               <vue-plyr ref="plyr" >
                 <audio controls preload playsinline >
-                  <source :src="this.$store.state.reproduzindo.currentAudio.src" :type="this.$store.state.reproduzindo.currentAudio.type">
+                  <source :src="this.$store.state.reproduzindo.currentAudio.src" :type="this.$store.state.reproduzindo.currentAudio.type" />
                 </audio>
               </vue-plyr>
             </div>
@@ -148,18 +148,17 @@ export default {
       }
     },
     play () {
-      // const playPromise = this.player.play()
-      const playPromise = this.$refs.plyr.player.play()
+      const playPromise = this.player.play()
       this.player.autoplay = true
 
-      console.log(playPromise)
-      // if (playPromise !== undefined) {
-      //   playPromise.then((_) => {
-      //     this.pause()
-      //   }).catch((error) => {
-      //     console.log(error)
-      //   })
-      // }
+      if (playPromise !== undefined) {
+        playPromise.then((_) => {
+          // this.pause()
+          console.log(_)
+        }).catch((error) => {
+          console.log(error)
+        })
+      }
       if (this.player.playing) {
         this.reproduzindo = true
         this.duracao = this.player.duration
@@ -212,7 +211,6 @@ export default {
       }
     },
     setVolume (vol) {
-      console.log(vol)
       this.player.volume = vol
     },
     miliSec (millis) {
