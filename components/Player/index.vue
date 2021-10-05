@@ -62,7 +62,7 @@
             <div v-show="showPlayerGeral" class="box-player-geral">
               <vue-plyr ref="plyr" >
                 <audio controls preload playsinline >
-                  <source :src="this.$store.state.reproduzindo.currentAudio.src" :type="this.$store.state.reproduzindo.currentAudio.type" />
+                  <!-- <source :src="this.$store.state.reproduzindo.currentAudio.src" :type="this.$store.state.reproduzindo.currentAudio.type" /> -->
                 </audio>
               </vue-plyr>
             </div>
@@ -79,7 +79,7 @@ export default {
     return {
       settings: ['captions', 'quality', 'speed', 'loop'],
       options: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
-      player: [],
+      player: null,
       reproduzindo: false,
       showPlayerGeral: true,
       mainProps: { blank: true, blankColor: '#777', width: 35, height: 35, class: 'm1' },
