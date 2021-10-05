@@ -145,8 +145,8 @@ export default {
         this.player.play()
       }
     },
-    async play () {
-      const playPromise = await this.player.play()
+    play () {
+      const playPromise = this.player.play()
       this.player.autoplay = true
 
       console.log(playPromise)
