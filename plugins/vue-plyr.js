@@ -4,6 +4,7 @@ import 'vue-plyr/dist/vue-plyr.css'
 
 Vue.use(VuePlyr, {
   plyr: {
+    type: 'audio',
     update: true,
     debug: true
   }
