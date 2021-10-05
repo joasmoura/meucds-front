@@ -61,7 +61,7 @@
           <b-col md="4">
             <div v-show="showPlayerGeral" class="box-player-geral">
               <vue-plyr ref="plyr" >
-                <audio controls crossorigin preload playsinline :src="this.$store.state.reproduzindo.currentAudio.src"></audio>
+                <audio controls preload playsinline :src="this.$store.state.reproduzindo.currentAudio.src"></audio>
               </vue-plyr>
             </div>
           </b-col>
