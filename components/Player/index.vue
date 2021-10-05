@@ -80,7 +80,7 @@ export default {
       options: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
       player: null,
       reproduzindo: false,
-      showPlayerGeral: true,
+      showPlayerGeral: false,
       mainProps: { blank: true, blankColor: '#777', width: 35, height: 35, class: 'm1' },
       tempoAtual: '0.00',
       duracao: '0.00',
