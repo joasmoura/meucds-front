@@ -1,5 +1,11 @@
 <template>
-  <b-navbar toggleable="lg" type="dark" variant="dark" fixed="bottom" class="m-0 navbar-player">
+  <b-navbar
+    v-if="this.$store.state.reproduzindo.currentAudio"
+     toggleable="lg"
+     type="dark"
+     variant="dark"
+     fixed="bottom"
+     class="m-0 navbar-player">
     <b-container fluid>
       <b-container>
 
@@ -71,10 +77,9 @@ export default {
     return {
       settings: ['captions', 'quality', 'speed', 'loop'],
       options: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
-      currentAudio: [],
       player: [],
       reproduzindo: false,
-      showPlayerGeral: false,
+      showPlayerGeral: true,
       mainProps: { blank: true, blankColor: '#777', width: 35, height: 35, class: 'm1' },
       tempoAtual: '0.00',
       duracao: '0.00',
@@ -83,30 +88,27 @@ export default {
       volume: 1
     }
   },
-  created () {
-
-  },
   mounted () {
     this.player = this.$refs.plyr.player
     this.volume = this.player.volume
     this.update()
 
-    this.player.on('ended', (e) => {
-      if (this.key + 1 <= (this.$store.state.reproduzindo.list.length - 1)) {
+    this.player.on('ended', () => {
+      if ((this.key + 1) <= (this.$store.state.reproduzindo.list.length - 1)) {
         this.next()
-      } else if (this.reload && (this.key + 1 > (this.$store.state.reproduzindo.list.length - 1))) {
+      } else if (this.reload && ((this.key + 1) > (this.$store.state.reproduzindo.list.length - 1))) {
         this.key = 0
         this.update()
         this.play()
       }
     })
 
-    this.player.on('progress', (event) => {
+    this.player.on('progress', () => {
       this.tempoAtual = Number(this.player.currentTime)
       this.duracao = Number(this.player.duration)
     })
 
-    this.player.on('timeupdate', (event) => {
+    this.player.on('timeupdate', () => {
       if (this.player.playing) {
         this.tempoAtual = Number(this.player.currentTime)
       }
@@ -143,8 +145,8 @@ export default {
         this.player.play()
       }
     },
-    async play () {
-      const playPromise = await this.player.play()
+    play () {
+      const playPromise = this.player.play()
       this.player.autoplay = true
       if (playPromise !== undefined) {
         playPromise.then((_) => {
