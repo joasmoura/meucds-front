@@ -105,25 +105,27 @@ export default {
 
           if (banners) {
             this.montarBanner(banners)
-            const banner1 = banners.find(b => b.ordem === 1)
-            const banner2 = banners.find(b => b.ordem === 2)
-            const banner3 = banners.find(b => b.ordem === 3)
-            const banner4 = banners.find(b => b.ordem === 4)
+            const banner1 = banners.find(b => parseInt(b.ordem) === 1)
+            const banner2 = banners.find(b => parseInt(b.ordem) === 2)
+            const banner3 = banners.find(b => parseInt(b.ordem) === 3)
+            const banner4 = banners.find(b => parseInt(b.ordem) === 4)
 
             if (banner1) { this.$store.commit('banner/add', banner1) }
             if (banner2) { this.$store.commit('banner/add', banner2) }
             if (banner3) { this.$store.commit('banner/add', banner3) }
             if (banner4) { this.$store.commit('banner/add', banner4) }
+
+            console.log(banner1)
           }
           this.load = false
         })
       }
     },
     montarBanner (banner) {
-      const banner1 = banner.find(b => b.ordem === 1)
-      const banner2 = banner.find(b => b.ordem === 2)
-      const banner3 = banner.find(b => b.ordem === 3)
-      const banner4 = banner.find(b => b.ordem === 4)
+      const banner1 = banner.find(b => parseInt(b.ordem) === 1)
+      const banner2 = banner.find(b => parseInt(b.ordem) === 2)
+      const banner3 = banner.find(b => parseInt(b.ordem) === 3)
+      const banner4 = banner.find(b => parseInt(b.ordem) === 4)
 
       if (banner1) { this.banner1 = banner1 }
       if (banner2) { this.banner2 = banner2 }
