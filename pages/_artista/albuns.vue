@@ -1,17 +1,157 @@
 <template>
-  <h3>Albuns do Artista {{this.artista}}</h3>
+<div>
+  <headerArtista :artista="artista" />
+
+  <b-container>
+    <h3>Albuns do Artista </h3>
+    <b-row v-if="artista.cds">
+      <b-col v-for="(cd, key) in artista.cds" :key="cd.id" md="2" @mouseenter="ativaBotaoPlay(key)" @mouseleave="desativaBotaoPlay(key)" >
+        <b-button :id="`cd-${key}`" class="botaoPlay" @click="ouvir(cd.id)" v-b-tooltip.hover title="Escutar">
+          <b-icon icon="play-fill"></b-icon>
+        </b-button>
+
+        <b-link :to="`${cd.url}`">
+          <b-card
+            :title="titulos(cd.titulo)"
+            :img-src="cd.capa_mini"
+            :img-alt="cd.titulo"
+            img-top
+            tag="article"
+            style="max-width: 20rem;"
+            class="mb-2 box-cd"
+          >
+            <b-card-text>
+              {{Object.entries(cd.musicas).length}} músicas
+            </b-card-text>
+          </b-card>
+        </b-link>
+      </b-col>
+    </b-row>
+  </b-container>
+</div>
 </template>
 
 <script>
+import HeaderArtista from '@/components/Artistas/header.vue'
 export default {
-  asyncData ({ params }) {
-    const artista = params.artista
+  // asyncData ({ params }) {
+  //   const artista = params.artista
 
-    return { artista }
+  //   return { artista }
+  // },
+  data () {
+    return {
+      artista: [],
+      uri: ''
+    }
+  },
+  components: {
+    HeaderArtista
+  },
+  created () {
+    this.uri = this.$route.params.artista
+    this.getArtista()
+  },
+
+  methods: {
+    ouvir (id) {
+      const cd = this.artista.cds.find(i => i.id === id)
+      if (cd) {
+        const musicas = cd.musicas
+
+        if (Object.entries(musicas).length > 0) {
+          this.$store.commit('reproduzindo/limpar')
+          for (const key in musicas) {
+            this.$store.commit('reproduzindo/add', {
+              id: musicas[key].id,
+              src: musicas[key].link_musica,
+              type: 'audio/mp3',
+              nome: musicas[key].nome
+            })
+          }
+          const reproduzindo = this.$store.state.reproduzindo.list[0]
+          this.$store.commit('reproduzindo/addCurrent', {
+            id: reproduzindo.id,
+            src: reproduzindo.src,
+            type: 'audio/mp3',
+            nome: reproduzindo.nome
+          })
+          this.$nuxt.$emit('novareproducao')
+        }
+      }
+    },
+    async getArtista () {
+      const artista = await this.$store.state.artista.list.find(a => this.uri === a.url)
+      console.log(artista)
+      if (artista) {
+        this.artista = artista
+      } else {
+        await this.$axios.get(`artista/${this.uri}`).then((r) => {
+          this.$store.commit('artista/add', r.data.artista)
+          this.artista = r.data.artista
+          this.load = false
+        }).catch((error) => {
+          console.log(error)
+          // this.$router.push('/')
+        })
+      }
+    },
+    titulos (t) {
+      if (t !== '') {
+        return t.split(' ')
+          .map(word => (word[0] ? word[0].toUpperCase() : '') + word.slice(1).toLowerCase())
+          .join(' ')
+      }
+    },
+
+    ativaBotaoPlay (id) {
+      const botao = document.getElementById(`cd-${id}`)
+      botao.style.display = 'block'
+    },
+    desativaBotaoPlay (id) {
+      const botao = document.getElementById(`cd-${id}`)
+      botao.style.display = 'none'
+    }
   }
 }
 </script>
 
 <style>
+  .box-cd{
+    border:none;
+    position: relative;
+  }
+  .box-cd .card-text{
+    padding:0;
+    margin: 0;
+    font-size: 12px;
+    color:#999;
+  }
+  .box-cd .card-body{
+    padding: 5px;
+  }
+  .box-cd .card-title{
+    margin:0;
+    padding: 0;
+    font-size: 12px;
+    font-weight: bold;
+  }
 
+  .botaoPlay{
+    position:absolute;
+    width: 40px;
+    height: 40px;
+    top:25%;
+    left:38%;
+    background: #00c5a2;
+    border:none;
+    border-radius: 50%;
+    padding:0;
+    z-index: 200;
+    display: none;
+  }
+
+  .botaoPlay:hover{
+    background: #0a967e;
+  }
 </style>
