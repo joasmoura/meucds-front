@@ -209,8 +209,8 @@ export default {
           this.playerVideo.source = {
             type: 'video',
             sources: [{
-                src: this.currentAudio.src,
-                provider: 'youtube'
+              src: this.currentAudio.src,
+              provider: 'youtube'
             }]
           }
         } else {
@@ -218,8 +218,8 @@ export default {
             type: 'audio',
             title: this.currentAudio.nome,
             sources: [{
-                src: this.currentAudio.src,
-                type: 'audio/mp3'
+              src: this.currentAudio.src,
+              type: 'audio/mp3'
             }]
           }
         }

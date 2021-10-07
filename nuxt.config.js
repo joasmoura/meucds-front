@@ -44,7 +44,7 @@ export default {
   ],
 
   bootstrapVue: {
-    icons: true,
+    icons: true
   },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -57,7 +57,7 @@ export default {
       local: {
         endpoints: {
           login: { url: '/login', method: 'post', propertyName: 'authenticationToken' },
-          user: { url: '/user', method: 'get', propertyName: null}
+          user: { url: '/user', method: 'get', propertyName: null }
         }
       }
     },
