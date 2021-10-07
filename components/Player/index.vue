@@ -115,6 +115,7 @@ export default {
   mounted () {
     this.player = this.$refs.plyr.player
     this.playerVideo = this.$refs.plyrVideo.player
+
     this.volume = this.player.volume
     this.currentAudio = this.$store.state.reproduzindo.list[0]
     this.update()
@@ -207,23 +208,19 @@ export default {
         if (this.currentAudio.type === 'youtube') {
           this.playerVideo.source = {
             type: 'video',
-            sources: [
-              {
+            sources: [{
                 src: this.currentAudio.src,
                 provider: 'youtube'
-              }
-            ]
+            }]
           }
         } else {
           this.player.source = {
             type: 'audio',
             title: this.currentAudio.nome,
-            sources: [
-              {
+            sources: [{
                 src: this.currentAudio.src,
                 type: 'audio/mp3'
-              }
-            ]
+            }]
           }
         }
       }
@@ -250,7 +247,6 @@ export default {
           this.playerVideo.play()
         } else if (currentAudio.type === 'audio/mp3') {
           this.currentAudio = currentAudio
-
           this.update()
           this.play()
         }
