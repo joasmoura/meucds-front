@@ -128,6 +128,14 @@ export default {
       }
     })
 
+    this.playerVideo.on('ended', () => {
+      console.log('aqui')
+      this.key = 1
+      this.currentAudio = this.$store.state.reproduzindo.list[this.key]
+      this.update()
+      this.play()
+    })
+
     this.player.on('progress', () => {
       this.tempoAtual = Number(this.player.currentTime)
       this.duracao = Number(this.player.duration)
@@ -347,5 +355,6 @@ export default {
     top:-365%;
     width: 30%;
     height: 250px !important;
+    padding-bottom: 0;
   }
 </style>
