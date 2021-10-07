@@ -6,8 +6,18 @@
      fixed="bottom"
      class="m-0 navbar-player">
     <b-container fluid>
-      <b-container>
+        <vue-plyr v-show="currentAudio.type == 'youtube'" ref="plyrVideo">
+          <div class="plyr__video-embed">
+            <iframe
+              :src="`https://www.youtube.com/embed/${currentAudio.src}?amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1`"
+              allowfullscreen
+              allowtransparency
+              allow="autoplay"
+            ></iframe>
+          </div>
+        </vue-plyr>
 
+      <b-container>
         <b-row class="w-100">
           <b-col md="4">
             <div class="flex-fill box-actions mt-2">
@@ -27,8 +37,9 @@
                     type="range"
                     v-model="volume"
                     @mousemove="setVolume(volume)"
+                    @keydown="setVolume(volume)"
                     min="0"
-                    step="0.1"
+                    step="0.01"
                     max="1"
                     class="form-control-range p-0">
                 </b-dropdown-form>
@@ -59,13 +70,15 @@
 
           <b-col md="4">
             <div v-show="showPlayerGeral" class="box-player-geral">
-              <vue-plyr ref="plyr" >
+              <vue-plyr  v-show="currentAudio.type === 'audio/mp3'" ref="plyr" >
                 <!-- <audio controls preload playsinline>
                   <source v-for="audio in this.$store.state.reproduzindo.currentAudio" :key="audio.id" :src="audio.src" :type="audio.type" />
                 </audio> -->
 
                 <video controls preload playsinline>
-                  <source v-for="audio in this.$store.state.reproduzindo.currentAudio" :key="audio.id" :src="audio.src" :type="audio.type" />
+                  <div v-for="source in currentAudio" :key="source.id">
+                    <source :src="source.src" :type="source.type" />
+                  </div>
                 </video>
               </vue-plyr>
             </div>
@@ -83,19 +96,24 @@ export default {
       settings: ['captions', 'quality', 'speed', 'loop'],
       options: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
       player: null,
+      playerVideo: null,
       reproduzindo: false,
-      showPlayerGeral: false,
+      showPlayerGeral: true,
       mainProps: { blank: true, blankColor: '#777', width: 35, height: 35, class: 'm1' },
       tempoAtual: '0.00',
       duracao: '0.00',
       key: 0,
       reload: false,
-      volume: 1
+      volume: 1,
+      currentAudio: [],
+      linkPublicidade: ''
     }
   },
   mounted () {
     this.player = this.$refs.plyr.player
+    this.playerVideo = this.$refs.plyrVideo.player
     this.volume = this.player.volume
+    this.currentAudio = this.$store.state.reproduzindo.list[0]
     this.update()
 
     this.player.on('ended', () => {
@@ -103,6 +121,7 @@ export default {
         this.next()
       } else if (this.reload && ((this.key + 1) > (this.$store.state.reproduzindo.list.length - 1))) {
         this.key = 0
+        this.currentAudio = this.$store.state.reproduzindo.list[this.key]
         this.update()
         this.play()
       }
@@ -133,6 +152,8 @@ export default {
       } else {
         this.key = 0
       }
+
+      this.currentAudio = this.$store.state.reproduzindo.list[this.key]
       this.update()
       if (this.player.playing) {
         this.play()
@@ -144,8 +165,9 @@ export default {
       } else {
         this.key = this.$store.state.reproduzindo.list.length - 1
       }
-      this.update()
 
+      this.currentAudio = this.$store.state.reproduzindo.list[this.key]
+      this.update()
       if (this.player.playing) {
         this.play()
       }
@@ -168,37 +190,60 @@ export default {
       }
     },
     update () {
-      const currentAudio = this.$store.state.reproduzindo.list[this.key]
-      if (currentAudio) {
-        this.$store.commit('reproduzindo/addCurrent', currentAudio)
+      if (this.currentAudio) {
+        this.$store.commit('reproduzindo/addCurrent', this.currentAudio)
 
-        this.player.source = {
-          type: 'audio',
-          title: currentAudio.nome,
-          sources: [
-            {
-              src: currentAudio.src,
-              type: 'audio/mp3'
-            }
-          ]
+        if (this.currentAudio.type === 'youtube') {
+          this.playerVideo.source = {
+            type: 'video',
+            sources: [
+              {
+                src: this.currentAudio.src,
+                provider: 'youtube'
+              }
+            ]
+          }
+        } else {
+          this.player.source = {
+            type: 'audio',
+            title: this.currentAudio.nome,
+            sources: [
+              {
+                src: this.currentAudio.src,
+                type: 'audio/mp3'
+              }
+            ]
+          }
         }
       }
     },
     updateExterno () {
-      const currentAudio = this.$store.state.reproduzindo.currentAudio
+      this.key = 0
+      const currentAudio = this.$store.state.reproduzindo.list[this.key]
+
       if (currentAudio) {
-        this.player.source = {
-          type: 'audio',
-          title: currentAudio.nome,
-          sources: [
-            {
-              src: currentAudio.src,
-              type: 'audio/mp3'
-            }
-          ]
+        if (currentAudio.type === 'youtube') {
+          if (currentAudio.link) {
+            this.linkPublicidade = currentAudio.link
+          }
+
+          this.currentAudio = {
+            id: currentAudio.id,
+            cd_id: currentAudio.cd_id,
+            src: currentAudio.src,
+            type: currentAudio.type,
+            nome: currentAudio.nome
+          }
+          this.update()
+
+          this.playerVideo.play()
+        } else if (currentAudio.type === 'audio/mp3') {
+          this.currentAudio = currentAudio
+
+          this.update()
+          this.play()
         }
       }
-      this.play()
     },
     async pause () {
       await this.player.pause()
@@ -293,5 +338,13 @@ export default {
 
   .custom-range .progress-bar{
     background: #00c5a2 !important;
+  }
+
+  .plyr--video{
+    position:absolute !important;
+    right: 0;
+    top:-365%;
+    width: 30%;
+    height: 250px !important;
   }
 </style>

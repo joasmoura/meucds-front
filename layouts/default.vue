@@ -139,14 +139,14 @@ export default {
       if (!musicas.length) {
         const sources = [
           {
-            src: 'https://www.meucds.com/musicas/TAYRONE%20AGOSTO%202020/1-EDILENE%20(IN%C3%89DITA).mp3',
-            type: 'audio/mp3',
-            nome: 'Edilene'
-          },
-          {
             src: 'http://localhost/meucds/storage/musicas/FARRA%20DE%20QUALIDADE/01%20VAPO%20CHAPULETEI.mp3',
             type: 'audio/mp3',
             nome: 'Meu parceiro'
+          },
+          {
+            src: 'https://www.meucds.com/musicas/TAYRONE%20AGOSTO%202020/1-EDILENE%20(IN%C3%89DITA).mp3',
+            type: 'audio/mp3',
+            nome: 'Edilene'
           }
         ]
 

@@ -42,7 +42,8 @@ export default {
   data () {
     return {
       artista: [],
-      uri: ''
+      uri: '',
+      publicidade: null
     }
   },
   components: {
@@ -61,17 +62,33 @@ export default {
 
         if (Object.entries(musicas).length > 0) {
           this.$store.commit('reproduzindo/limpar')
+
+          const publicidade = this.$store.state.publicidade.list.find(c => parseInt(cd.id) === parseInt(c.cd_id))
+          if (publicidade) {
+            this.$store.commit('reproduzindo/add', {
+              id: publicidade.id,
+              cd_id: cd.id,
+              src: publicidade.src,
+              type: publicidade.origem,
+              nome: publicidade.titulo,
+              link: publicidade.link
+            })
+          }
+
           for (const key in musicas) {
             this.$store.commit('reproduzindo/add', {
               id: musicas[key].id,
+              cd_id: musicas[key].cd_id,
               src: musicas[key].link_musica,
               type: 'audio/mp3',
               nome: musicas[key].nome
             })
           }
+
           const reproduzindo = this.$store.state.reproduzindo.list[0]
           this.$store.commit('reproduzindo/addCurrent', {
             id: reproduzindo.id,
+            cd_id: reproduzindo.cd_id,
             src: reproduzindo.src,
             type: 'audio/mp3',
             nome: reproduzindo.nome
@@ -82,7 +99,6 @@ export default {
     },
     async getArtista () {
       const artista = await this.$store.state.artista.list.find(a => this.uri === a.url)
-      console.log(artista)
       if (artista) {
         this.artista = artista
       } else {
@@ -90,6 +106,16 @@ export default {
           this.$store.commit('artista/add', r.data.artista)
           this.artista = r.data.artista
           this.load = false
+
+          const publicidade = r.data.publicidade
+          if (publicidade.length > 0) {
+            publicidade.forEach((p) => {
+              const store = this.$store.state.publicidade.list.find(a => parseInt(p.cd_id) === parseInt(a.cd_id))
+              if (!store) {
+                this.$store.commit('publicidade/add', p)
+              }
+            })
+          }
         }).catch((error) => {
           console.log(error)
           // this.$router.push('/')

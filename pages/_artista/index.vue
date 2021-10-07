@@ -85,32 +85,4 @@ export default {
 
 <style>
 
-  .banner-artista{
-    height: 200px;
-    background: orange;
-  }
-
-  .infos-artista{
-    margin-top: -30px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 .5em #ccc;
-  }
-
-  .infos-artista .nome-artista{
-    font-size: 1.3em;
-  }
-
-  .infos-artista .num-dado{
-    font-weight: bold;
-    color: #00C5A2;
-    font-size: 20px;
-    margin: 0;
-  }
-
-  .infos-artista .nome-dado{
-    font-size: 15px;
-    color: #00C5A2;
-
-  }
 </style>
