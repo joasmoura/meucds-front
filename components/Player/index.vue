@@ -7,8 +7,9 @@
      class="m-0 navbar-player">
     <b-container fluid>
         <vue-plyr v-show="currentAudio.type == 'youtube'" ref="plyrVideo">
-          <div class="plyr__video-embed">
+          <div  class="plyr__video-embed">
             <iframe
+              v-if="currentAudio.type == 'youtube'"
               :src="`https://www.youtube.com/embed/${currentAudio.src}?amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1`"
               allowfullscreen
               allowtransparency
@@ -340,7 +341,7 @@ export default {
     background: #00c5a2 !important;
   }
 
-  .plyr--video{
+  .plyr__video-embed{
     position:absolute !important;
     right: 0;
     top:-365%;
