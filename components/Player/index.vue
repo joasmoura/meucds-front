@@ -131,12 +131,16 @@ export default {
       }
     })
 
-    this.playerVideo.on('ended', () => {
-      console.log('aqui')
-      this.key = 1
-      this.currentAudio = this.$store.state.reproduzindo.list[this.key]
-      this.update()
-      this.play()
+    this.playerVideo.on('statechange', (evt) => {
+      const embedCode = evt.target.getVideoEmbedCode()
+      console.log(embedCode)
+      if (embedCode === 0) {
+        console.log('aqui')
+        this.key = 1
+        this.currentAudio = this.$store.state.reproduzindo.list[this.key]
+        this.update()
+        this.play()
+      }
     })
 
     this.player.on('progress', () => {
