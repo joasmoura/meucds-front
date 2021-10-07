@@ -5,18 +5,20 @@
      variant="dark"
      fixed="bottom"
      class="m-0 navbar-player">
+
+    <vue-plyr v-show="currentAudio.type == 'youtube'" ref="plyrVideo">
+      <div  class="plyr__video-embed">
+        <iframe
+          v-if="currentAudio.type === 'youtube'"
+          :src="`https://www.youtube.com/embed/${currentAudio.src}?amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1`"
+          allowfullscreen
+          allowtransparency
+          allow="autoplay"
+        ></iframe>
+      </div>
+    </vue-plyr>
+
     <b-container fluid>
-        <vue-plyr v-show="currentAudio.type == 'youtube'" ref="plyrVideo">
-          <div  class="plyr__video-embed">
-            <iframe
-              v-if="currentAudio.type == 'youtube'"
-              :src="`https://www.youtube.com/embed/${currentAudio.src}?amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1`"
-              allowfullscreen
-              allowtransparency
-              allow="autoplay"
-            ></iframe>
-          </div>
-        </vue-plyr>
 
       <b-container>
         <b-row class="w-100">
