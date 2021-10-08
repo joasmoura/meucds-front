@@ -11,10 +11,9 @@
         <div  class="plyr__video-embed">
           <iframe
             v-if="currentAudio.type === 'youtube'"
-            :src="`https://www.youtube.com/embed/${currentAudio.src}?amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1`"
+            :src="`https://www.youtube.com/embed/${currentAudio.src}?autoplay=1&amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1`"
             allowfullscreen
             allowtransparency
-            allow="autoplay"
           ></iframe>
         </div>
       </vue-plyr>
@@ -251,6 +250,7 @@ export default {
           this.update()
 
           this.playerVideo.play()
+          this.playerVideo.autoplay = true
         } else if (currentAudio.type === 'audio/mp3') {
           this.currentAudio = currentAudio
           this.update()
