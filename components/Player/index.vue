@@ -6,17 +6,19 @@
      fixed="bottom"
      class="m-0 navbar-player">
 
-    <vue-plyr v-show="currentAudio.type == 'youtube'" ref="plyrVideo">
-      <div  class="plyr__video-embed">
-        <iframe
-          v-if="currentAudio.type === 'youtube'"
-          :src="`https://www.youtube.com/embed/${currentAudio.src}?amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1`"
-          allowfullscreen
-          allowtransparency
-          allow="autoplay"
-        ></iframe>
-      </div>
-    </vue-plyr>
+    <div class="box-player-video">
+      <vue-plyr v-show="currentAudio.type == 'youtube'" ref="plyrVideo">
+        <div  class="plyr__video-embed">
+          <iframe
+            v-if="currentAudio.type === 'youtube'"
+            :src="`https://www.youtube.com/embed/${currentAudio.src}?amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1`"
+            allowfullscreen
+            allowtransparency
+            allow="autoplay"
+          ></iframe>
+        </div>
+      </vue-plyr>
+    </div>
 
     <b-container fluid>
 
@@ -351,12 +353,20 @@ export default {
     background: #00c5a2 !important;
   }
 
-  .plyr__video-embed{
+  .box-player-video{
     position:absolute !important;
     right: 0;
     top:-365%;
-    width: 30%;
+    width: 400px;
     height: 250px !important;
     padding-bottom: 0;
+    background: #00c5a2;
+  }
+
+  .plyr__video-embed, .plyr__video-embed iframe{
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    height: 250px;
   }
 </style>
