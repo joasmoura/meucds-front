@@ -1,39 +1,30 @@
 <template>
-  <b-navbar
-     toggleable="lg"
-     type="dark"
-     variant="dark"
-     fixed="bottom"
-     class="m-0 navbar-player">
-
-    <div class="box-player-video">
-      <vue-plyr v-show="currentAudio.type == 'youtube'" ref="plyrVideo">
-        <div  class="plyr__video-embed">
-          <iframe
-            v-if="currentAudio.type === 'youtube'"
-            :src="`https://www.youtube.com/embed/${currentAudio.src}?autoplay=1&amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1`"
-            allowfullscreen
-            allowtransparency
-          ></iframe>
-        </div>
-      </vue-plyr>
-    </div>
-
+  <b-navbar toggleable="lg" type="dark" variant="dark" fixed="bottom" class="m-0 navbar-player">
     <b-container fluid>
-
       <b-container>
         <b-row class="w-100">
           <b-col md="4">
             <div class="flex-fill box-actions mt-2">
-              <b-img v-bind="mainProps" rounded alt=""></b-img>
-              <b-button @click="prev"><b-icon icon="skip-start-fill"></b-icon></b-button>
-              <b-button v-if="!reproduzindo" @click="play" class="play"><b-icon icon="play-fill"></b-icon></b-button>
-              <b-button v-if="reproduzindo" @click="pause"><b-icon icon="pause"></b-icon></b-button>
-              <b-button @click="next"><b-icon icon="skip-end-fill"></b-icon></b-button>
+              <b-img v-bind="mainProps" rounded alt="" />
+              <b-button @click="prev">
+                <b-icon icon="skip-start-fill"/>
+              </b-button>
+
+              <b-button v-if="!reproduzindo" @click="play" class="play">
+                <b-icon icon="play-fill"/>
+              </b-button>
+
+              <b-button v-if="reproduzindo" @click="pause">
+                <b-icon icon="pause"/>
+              </b-button>
+
+              <b-button @click="next">
+                <b-icon icon="skip-end-fill"/>
+              </b-button>
 
               <b-dropdown no-caret dropup>
                 <template #button-content>
-                  <b-icon icon="volume-up-fill"></b-icon>
+                  <b-icon icon="volume-up-fill"/>
                 </template>
 
                 <b-dropdown-form class="p-0">
@@ -75,16 +66,15 @@
           <b-col md="4">
             <div v-show="showPlayerGeral" class="box-player-geral">
               <vue-plyr  v-show="currentAudio.type === 'audio/mp3'" ref="plyr" >
-                <!-- <audio controls preload playsinline>
-                  <source v-for="audio in this.$store.state.reproduzindo.currentAudio" :key="audio.id" :src="audio.src" :type="audio.type" />
-                </audio> -->
-
-                <video controls preload playsinline>
-                  <div v-for="source in currentAudio" :key="source.id">
-                    <source :src="source.src" :type="source.type" />
+                <video preload playsinline>
+                  <div v-if="currentAudio.type === 'audio/mp3'">
+                    <source v-for="source in currentAudio" :key="source.id" :src="source.src" :type="source.type" />
                   </div>
+
+                  <div v-if="currentAudio.type === 'youtube'" data-plyr-provider="youtube" :data-plyr-embed-id="currentAudio.src"></div>
                 </video>
               </vue-plyr>
+              <b-button :href="linkPublicidade" target="_blank" class="botao-publicidade d-block">Visitar anunciante</b-button>
             </div>
           </b-col>
         </b-row>
@@ -102,7 +92,7 @@ export default {
       player: null,
       playerVideo: null,
       reproduzindo: false,
-      showPlayerGeral: true,
+      showPlayerGeral: false,
       mainProps: { blank: true, blankColor: '#777', width: 35, height: 35, class: 'm1' },
       tempoAtual: '0.00',
       duracao: '0.00',
@@ -110,12 +100,12 @@ export default {
       reload: false,
       volume: 1,
       currentAudio: [],
-      linkPublicidade: ''
+      linkPublicidade: '',
+      youtubeControle: null
     }
   },
   mounted () {
     this.player = this.$refs.plyr.player
-    this.playerVideo = this.$refs.plyrVideo.player
 
     this.volume = this.player.volume
     this.currentAudio = this.$store.state.reproduzindo.list[0]
@@ -126,18 +116,6 @@ export default {
         this.next()
       } else if (this.reload && ((this.key + 1) > (this.$store.state.reproduzindo.list.length - 1))) {
         this.key = 0
-        this.currentAudio = this.$store.state.reproduzindo.list[this.key]
-        this.update()
-        this.play()
-      }
-    })
-
-    this.playerVideo.on('statechange', (evt) => {
-      const embedCode = evt.target.getVideoEmbedCode()
-      console.log(embedCode)
-      if (embedCode === 0) {
-        console.log('aqui')
-        this.key = 1
         this.currentAudio = this.$store.state.reproduzindo.list[this.key]
         this.update()
         this.play()
@@ -190,17 +168,9 @@ export default {
       }
     },
     play () {
-      const playPromise = this.player.play()
+      this.player.play()
       this.player.autoplay = true
 
-      if (playPromise !== undefined) {
-        playPromise.then((_) => {
-          // this.pause()
-          console.log(_)
-        }).catch((error) => {
-          console.log(error)
-        })
-      }
       if (this.player.playing) {
         this.reproduzindo = true
         this.duracao = this.player.duration
@@ -211,7 +181,8 @@ export default {
         this.$store.commit('reproduzindo/addCurrent', this.currentAudio)
 
         if (this.currentAudio.type === 'youtube') {
-          this.playerVideo.source = {
+          this.showPlayerGeral = true
+          this.player.source = {
             type: 'video',
             sources: [{
               src: this.currentAudio.src,
@@ -219,6 +190,7 @@ export default {
             }]
           }
         } else {
+          this.showPlayerGeral = false
           this.player.source = {
             type: 'audio',
             title: this.currentAudio.nome,
@@ -236,7 +208,7 @@ export default {
 
       if (currentAudio) {
         if (currentAudio.type === 'youtube') {
-          if (currentAudio.link) {
+          if (currentAudio.link !== '') {
             this.linkPublicidade = currentAudio.link
           }
 
@@ -249,8 +221,8 @@ export default {
           }
           this.update()
 
-          this.playerVideo.play()
-          this.playerVideo.autoplay = true
+          this.player.play()
+          this.player.autoplay = true
         } else if (currentAudio.type === 'audio/mp3') {
           this.currentAudio = currentAudio
           this.update()
@@ -353,20 +325,25 @@ export default {
     background: #00c5a2 !important;
   }
 
-  .box-player-video{
+  .box-player-geral{
     position:absolute !important;
-    right: 0;
-    top:-365%;
-    width: 400px;
-    height: 250px !important;
+    left: -112px !important;
+    top:-448px;
+    width: 700px;
+    bottom: 0;
+    height: 400px !important;
     padding-bottom: 0;
     background: #00c5a2;
   }
 
-  .plyr__video-embed, .plyr__video-embed iframe{
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    height: 250px;
+  .botao-publicidade{
+    background: #FFEB3B;
+    color:#222;
+    font-weight: bold;
+  }
+
+  .botao-publicidade:hover{
+    background: #F9CA53;
+    color:#222;
   }
 </style>

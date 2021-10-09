@@ -73,6 +73,16 @@ export default {
           this.$store.commit('artista/add', r.data.artista)
           this.artista = r.data.artista
           this.load = false
+
+          const publicidade = r.data.publicidade
+          if (publicidade.length > 0) {
+            publicidade.forEach((p) => {
+              const store = this.$store.state.publicidade.list.find(a => parseInt(p.cd_id) === parseInt(a.cd_id))
+              if (!store) {
+                this.$store.commit('publicidade/add', p)
+              }
+            })
+          }
         }).catch((error) => {
           console.log(error)
           this.$router.push('/')
