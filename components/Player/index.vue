@@ -68,7 +68,8 @@
               <vue-plyr  v-show="currentAudio.type === 'audio/mp3'" ref="plyr" >
                 <video preload playsinline>
                   <div v-if="currentAudio.type === 'audio/mp3'">
-                    <source v-for="source in currentAudio" :key="source.id" :src="source.src" :type="source.type" />
+                    <!-- <source v-for="source in currentAudio" :key="source.id" :src="source.src" :type="source.type" /> -->
+                    <source :src="currentAudio.src" :type="currentAudio.type" />
                   </div>
 
                   <div v-if="currentAudio.type === 'youtube'" data-plyr-provider="youtube" :data-plyr-embed-id="currentAudio.src"></div>
@@ -133,8 +134,9 @@ export default {
       }
     })
 
-    this.$nuxt.$on('novareproducao', () => {
-      this.updateExterno()
+    this.$nuxt.$off('novareproducao')
+    this.$nuxt.$on('novareproducao', (key) => {
+      this.updateExterno(key)
     })
   },
   methods: {
@@ -202,9 +204,8 @@ export default {
         }
       }
     },
-    updateExterno () {
-      this.key = 0
-      const currentAudio = this.$store.state.reproduzindo.list[this.key]
+    updateExterno (key) {
+      const currentAudio = this.$store.state.reproduzindo.list[key]
 
       if (currentAudio) {
         if (currentAudio.type === 'youtube') {
@@ -220,14 +221,11 @@ export default {
             nome: currentAudio.nome
           }
           this.update()
-
-          this.player.play()
-          this.player.autoplay = true
         } else if (currentAudio.type === 'audio/mp3') {
           this.currentAudio = currentAudio
           this.update()
-          this.play()
         }
+        this.play()
       }
     },
     async pause () {
@@ -327,11 +325,11 @@ export default {
 
   .box-player-geral{
     position:absolute !important;
-    left: -112px !important;
-    top:-448px;
-    width: 700px;
+    left: -52px !important;
+    top:-408px;
+    width: 600px;
     bottom: 0;
-    height: 400px !important;
+    height: 360px !important;
     padding-bottom: 0;
     background: #00c5a2;
   }
@@ -340,6 +338,7 @@ export default {
     background: #FFEB3B;
     color:#222;
     font-weight: bold;
+    width: 100%;
   }
 
   .botao-publicidade:hover{

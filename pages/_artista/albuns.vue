@@ -84,16 +84,7 @@ export default {
               nome: musicas[key].nome
             })
           }
-
-          const reproduzindo = this.$store.state.reproduzindo.list[0]
-          this.$store.commit('reproduzindo/addCurrent', {
-            id: reproduzindo.id,
-            cd_id: reproduzindo.cd_id,
-            src: reproduzindo.src,
-            type: 'audio/mp3',
-            nome: reproduzindo.nome
-          })
-          this.$nuxt.$emit('novareproducao')
+          this.$nuxt.$emit('novareproducao', 0)
         }
       }
     },
@@ -118,7 +109,7 @@ export default {
           }
         }).catch((error) => {
           console.log(error)
-          // this.$router.push('/')
+          this.$router.push('/')
         })
       }
     },

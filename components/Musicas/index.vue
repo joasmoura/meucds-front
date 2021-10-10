@@ -1,14 +1,12 @@
 <template>
 <div>
-  <h1>Musicas</h1>
   <b-list-group>
     <b-list-group-item v-for="(musica, key) in musicas" :key="musica.id" @mouseenter="ativaBotaoPlay(key)" @mouseleave="desativaBotaoPlay(key)" class="musica d-md-flex flex-row justify-content-between  align-items-center">
       <div>
-        <span v-if="(key+1 < 10 ? '0' : '')" class="p-4">0{{key+1}}</span>
-        <span v-else class="p-4">{{key+1}}</span>
+        <span class="p-4">{{renderNumero(key)}}</span>
 
-        <b-button :id="`musica-${key}`" class="botaoPlay" @click="ouvir(musica.id)" v-b-tooltip.hover :title="`Escutar ${titulos(musica.nome)}`">
-          <b-icon icon="play-fill"></b-icon>
+        <b-button :id="`musica-${key}`" class="botaoPlay" @click="ouvir(key)" v-b-tooltip.hover :title="`Escutar ${titulos(musica.nome)}`">
+          <b-icon icon="play-fill"/>
         </b-button>
       </div>
 
@@ -19,7 +17,7 @@
       <div>
         <b-dropdown size="lg"  variant="link" toggle-class="text-decoration-none" no-caret>
           <template #button-content>
-           <b-icon icon="three-dots-vertical"></b-icon>
+           <b-icon icon="three-dots-vertical"/>
           </template>
 
           <b-dropdown-item :href="`${musica.link_musica}`">Baixar</b-dropdown-item>
@@ -35,14 +33,21 @@ export default {
   data () {
     return {
       uri: '',
-      hoverList: ''
+      hoverList: '',
+      mumero: 0
     }
   },
   props: ['musicas', 'origem'],
   created () {
     this.uri = this.$route.params.artista
   },
+  computed: {
+
+  },
   methods: {
+    renderNumero (key) {
+      return parseInt(key) + 1
+    },
     ativaBotaoPlay (id) {
       const botao = document.getElementById(`musica-${id}`)
       botao.style.display = 'block'
@@ -51,9 +56,10 @@ export default {
       const botao = document.getElementById(`musica-${id}`)
       botao.style.display = 'none'
     },
-    ouvir (id) {
+    ouvir (key) {
+      this.$store.commit('reproduzindo/limpar')
+
       if (this.origem === 'todas') {
-        this.$store.commit('reproduzindo/limpar')
         this.musicas.forEach((s) => {
           this.$store.commit('reproduzindo/add', {
             id: s.id,
@@ -62,14 +68,28 @@ export default {
             nome: s.nome
           })
         })
-        const reproduzindo = this.$store.state.reproduzindo.list.find(it => parseInt(it.id) === id)
-        this.$store.commit('reproduzindo/addCurrent', {
-          id: reproduzindo.id,
-          src: reproduzindo.src,
-          type: 'audio/mp3',
-          nome: reproduzindo.nome
+      } else if (this.origem === 'cd') {
+        for (const key in this.musicas) {
+          this.$store.commit('reproduzindo/add', {
+            id: this.musicas[key].id,
+            src: this.musicas[key].link_musica,
+            type: 'audio/mp3',
+            nome: this.musicas[key].nome
+          })
+        }
+      }
+      this.$nuxt.$emit('novareproducao', key)
+
+      const publicidade = this.$store.state.publicidade.list.find(c => parseInt(this.musicas[0].cd_id) === parseInt(c.cd_id))
+      if (publicidade) {
+        this.$store.commit('reproduzindo/add', {
+          id: publicidade.id,
+          cd_id: publicidade.cd_id,
+          src: publicidade.src,
+          type: publicidade.origem,
+          nome: publicidade.titulo,
+          link: publicidade.link
         })
-        this.$nuxt.$emit('novareproducao')
       }
     },
     titulos (t) {
