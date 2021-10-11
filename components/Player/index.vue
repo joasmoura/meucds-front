@@ -75,7 +75,7 @@
                   <div v-if="currentAudio.type === 'youtube'" data-plyr-provider="youtube" :data-plyr-embed-id="currentAudio.src"></div>
                 </video>
               </vue-plyr>
-              <b-button :href="linkPublicidade" target="_blank" class="botao-publicidade d-block">Visitar anunciante</b-button>
+              <b-button :href="currentAudio.link" target="_blank" class="botao-publicidade d-block">Visitar anunciante</b-button>
             </div>
           </b-col>
         </b-row>
@@ -101,7 +101,6 @@ export default {
       reload: false,
       volume: 1,
       currentAudio: [],
-      linkPublicidade: '',
       youtubeControle: null
     }
   },
@@ -191,6 +190,17 @@ export default {
               provider: 'youtube'
             }]
           }
+        } else if (this.currentAudio.type === 'video/mp4') {
+          this.showPlayerGeral = true
+          this.player.source = {
+            type: 'video',
+            title: this.currentAudio.nome,
+            sources: [{
+              src: this.currentAudio.src,
+              type: this.currentAudio.type,
+              size: 720
+            }]
+          }
         } else {
           this.showPlayerGeral = false
           this.player.source = {
@@ -206,19 +216,15 @@ export default {
     },
     updateExterno (key) {
       const currentAudio = this.$store.state.reproduzindo.list[key]
-
       if (currentAudio) {
-        if (currentAudio.type === 'youtube') {
-          if (currentAudio.link !== '') {
-            this.linkPublicidade = currentAudio.link
-          }
-
+        if (currentAudio.type === 'youtube' || currentAudio.type === 'video/mp4') {
           this.currentAudio = {
             id: currentAudio.id,
             cd_id: currentAudio.cd_id,
             src: currentAudio.src,
             type: currentAudio.type,
-            nome: currentAudio.nome
+            nome: currentAudio.nome,
+            link: currentAudio.link
           }
           this.update()
         } else if (currentAudio.type === 'audio/mp3') {

@@ -63,15 +63,17 @@ export default {
         if (Object.entries(musicas).length > 0) {
           this.$store.commit('reproduzindo/limpar')
 
-          const publicidade = this.$store.state.publicidade.list.find(c => parseInt(cd.id) === parseInt(c.cd_id))
-          if (publicidade) {
-            this.$store.commit('reproduzindo/add', {
-              id: publicidade.id,
-              cd_id: cd.id,
-              src: publicidade.src,
-              type: publicidade.origem,
-              nome: publicidade.titulo,
-              link: publicidade.link
+          const publicidade = this.$store.state.publicidade.list.filter(c => parseInt(cd.id) === parseInt(c.cd_id))
+          if (publicidade.length) {
+            publicidade.forEach((p) => {
+              this.$store.commit('reproduzindo/add', {
+                id: p.id,
+                cd_id: cd.id,
+                src: p.src,
+                type: p.origem,
+                nome: p.titulo,
+                link: p.link
+              })
             })
           }
 
@@ -101,10 +103,10 @@ export default {
           const publicidade = r.data.publicidade
           if (publicidade.length > 0) {
             publicidade.forEach((p) => {
-              const store = this.$store.state.publicidade.list.find(a => parseInt(p.cd_id) === parseInt(a.cd_id))
-              if (!store) {
-                this.$store.commit('publicidade/add', p)
-              }
+              // const store = this.$store.state.publicidade.list.find(a => parseInt(p.cd_id) === parseInt(a.cd_id))
+              // if (!store) {
+              this.$store.commit('publicidade/add', p)
+              // }
             })
           }
         }).catch((error) => {

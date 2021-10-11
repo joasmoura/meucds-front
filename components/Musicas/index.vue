@@ -63,6 +63,7 @@ export default {
         this.musicas.forEach((s) => {
           this.$store.commit('reproduzindo/add', {
             id: s.id,
+            cd_id: s.cd_id,
             src: s.link_musica,
             type: 'audio/mp3',
             nome: s.nome
@@ -72,6 +73,7 @@ export default {
         for (const key in this.musicas) {
           this.$store.commit('reproduzindo/add', {
             id: this.musicas[key].id,
+            cd_id: this.musicas[key].cd_id,
             src: this.musicas[key].link_musica,
             type: 'audio/mp3',
             nome: this.musicas[key].nome
@@ -81,6 +83,7 @@ export default {
       this.$nuxt.$emit('novareproducao', key)
 
       const publicidade = this.$store.state.publicidade.list.find(c => parseInt(this.musicas[0].cd_id) === parseInt(c.cd_id))
+
       if (publicidade) {
         this.$store.commit('reproduzindo/add', {
           id: publicidade.id,
