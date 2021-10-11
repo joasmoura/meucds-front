@@ -332,10 +332,10 @@ export default {
   .box-player-geral{
     position:absolute !important;
     left: -52px !important;
-    top:-408px;
+    top:-347px;
     width: 600px;
     bottom: 0;
-    height: 360px !important;
+    height: 300px !important;
     padding-bottom: 0;
     background: #00c5a2;
   }
