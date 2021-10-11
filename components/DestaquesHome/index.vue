@@ -1,6 +1,6 @@
 <template>
   <section class="d-block">
-    <b-container fluid="sm">
+    <b-container fluid="lg">
       <loader :load="load" />
       <b-link v-if="Object.entries(banner1).length > 0 " :to="`/${banner1.url}`">
         <b-card

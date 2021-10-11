@@ -2,11 +2,15 @@
   <div>
     <headerArtista :artista="artista" />
 
-    <b-container>
-      <h3>Músicas do album</h3>
-      <b-overlay v-if="load || (artista && Object.entries(artista).length > 0) " :show="load" rounded="sm" style="min-height:200px">
-        <musicas :musicas="cdAtual.musicas" origem="cd" />
-      </b-overlay>
+    <b-container fluid="lg">
+      <b-row>
+        <b-col md="8">
+          <h3>Músicas do album</h3>
+          <b-overlay v-if="load || (artista && Object.entries(artista).length > 0) " :show="load" rounded="sm" style="min-height:200px">
+            <musicas :musicas="cdAtual.musicas" origem="cd" />
+          </b-overlay>
+        </b-col>
+      </b-row>
     </b-container>
   </div>
 </template>

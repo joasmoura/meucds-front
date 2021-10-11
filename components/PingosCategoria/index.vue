@@ -1,5 +1,5 @@
 <template>
-  <b-container v-if="categorias.length" class="py-3">
+  <b-container v-if="categorias.length" class="py-3" fluid="lg">
       <b-nav pills align="center" class="categorias_amostra">
         <b-nav-item :to="(path === '/categoria/' ? '/' : path )" v-bind:active="$nuxt._route.path === path">Todos</b-nav-item>
         <b-nav-item v-for="categoria in categorias" :key="categoria.nome" v-show="categoria.mostra" v-bind:active="verificaAtivo(categoria)" :to="`${path}${categoria.url}`">{{ categoria.nome }}</b-nav-item>

@@ -1,8 +1,8 @@
 <template>
-  <b-container fluid>
-    <pingos-categoria path="/categoria/" />
-    <destaque-home categoria="" />
-  </b-container>
+<div>
+  <pingos-categoria path="/categoria/" />
+  <destaque-home categoria="" />
+</div>
 </template>
 
 <script>

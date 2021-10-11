@@ -331,9 +331,9 @@ export default {
 
   .box-player-geral{
     position:absolute !important;
-    left: -52px !important;
+    left: 0 !important;
     top:-347px;
-    width: 600px;
+    width: 500px;
     bottom: 0;
     height: 300px !important;
     padding-bottom: 0;
