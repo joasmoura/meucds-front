@@ -82,16 +82,17 @@ export default {
       }
       this.$nuxt.$emit('novareproducao', key)
 
-      const publicidade = this.$store.state.publicidade.list.find(c => parseInt(this.musicas[0].cd_id) === parseInt(c.cd_id))
-
-      if (publicidade) {
-        this.$store.commit('reproduzindo/add', {
-          id: publicidade.id,
-          cd_id: publicidade.cd_id,
-          src: publicidade.src,
-          type: publicidade.origem,
-          nome: publicidade.titulo,
-          link: publicidade.link
+      const publicidade = this.$store.state.publicidade.list.filter(c => parseInt(this.musicas[0].cd_id) === parseInt(c.cd_id))
+      if (publicidade.length) {
+        publicidade.forEach((p) => {
+          this.$store.commit('reproduzindo/add', {
+            id: p.id,
+            cd_id: p.cd_id,
+            src: p.src,
+            type: p.origem,
+            nome: p.titulo,
+            link: p.link
+          })
         })
       }
     },
