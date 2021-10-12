@@ -6,7 +6,7 @@
         <span class="p-4">{{renderNumero(key)}}</span>
 
         <b-button :id="`musica-${key}`" class="botaoPlay" @click="ouvir(key)" v-b-tooltip.hover :title="`Escutar ${titulos(musica.nome)}`">
-          <b-icon icon="play-fill"/>
+          <b-icon icon="play-fill" />
         </b-button>
       </div>
 

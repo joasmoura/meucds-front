@@ -7,7 +7,10 @@
         <b-avatar v-if="Object.entries(artista).length > 0" :src="artista.foto" size="6rem" :alt="`Artista ${artista.nome}`"></b-avatar>
 
         <div class="ml-3">
+
           <h1 class="nome-artista">{{artista.nome}}</h1>
+          <b-button v-if="cd && Object.entries(cd.musicas).length > 0" size="sm" @click="$emit('ouvirCd')"><b-icon icon="play-fill" /> Reproduzir cd</b-button>
+          <b-button v-if="cd && Object.entries(cd.musicas).length > 0" size="sm"><b-icon icon="cloud-download" /> Baixar este cd</b-button>
         </div>
       </div>
 
@@ -28,7 +31,7 @@
 
 <script>
 export default {
-  props: ['artista']
+  props: ['artista', 'cd']
 }
 </script>
 

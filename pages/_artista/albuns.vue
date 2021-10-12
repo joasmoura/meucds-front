@@ -4,7 +4,7 @@
 
   <b-container>
     <h3>Albuns do Artista </h3>
-    <b-row v-if="artista.cds">
+    <b-row v-if="artista.cds && artista.cds.length">
       <b-col v-for="(cd, key) in artista.cds" :key="cd.id" md="2" @mouseenter="ativaBotaoPlay(key)" @mouseleave="desativaBotaoPlay(key)" >
         <b-button :id="`cd-${key}`" class="botaoPlay" @click="ouvir(cd.id)" v-b-tooltip.hover title="Escutar">
           <b-icon icon="play-fill"></b-icon>
@@ -21,7 +21,11 @@
             class="mb-2 box-cd"
           >
             <b-card-text>
-              {{Object.entries(cd.musicas).length}} músicas
+              <div v-if="cd.musicas">
+                {{Object.entries(cd.musicas).length}} músicas
+              </div>
+
+              <span v-else>0 músicas</span>
             </b-card-text>
           </b-card>
         </b-link>

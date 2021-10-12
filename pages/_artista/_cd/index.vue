@@ -1,14 +1,18 @@
 <template>
   <div>
-    <headerArtista :artista="artista" />
+    <headerArtista :artista="artista" :cd="cdAtual" v-on:ouvirCd="ouvir"/>
 
     <b-container fluid="lg">
-      <b-row>
-        <b-col md="8">
+      <b-row class="mt-3">
+        <b-col md="7">
           <h3>Músicas do album</h3>
           <b-overlay v-if="load || (artista && Object.entries(artista).length > 0) " :show="load" rounded="sm" style="min-height:200px">
-            <musicas :musicas="cdAtual.musicas" origem="cd" />
+            <musicas :musicas="cdAtual.musicas" origem="cd"/>
           </b-overlay>
+        </b-col>
+
+        <b-col md="5">
+          <iframe v-if="cdAtual && cdAtual.youtube" class="frameYoutube" :src="`https://www.youtube.com/embed/${cdAtual.youtube}`" />
         </b-col>
       </b-row>
     </b-container>
@@ -36,6 +40,37 @@ export default {
     HeaderArtista
   },
   methods: {
+    ouvir () {
+      const musicas = this.cdAtual.musicas
+      if (Object.entries(musicas).length > 0) {
+        this.$store.commit('reproduzindo/limpar')
+
+        const publicidade = this.$store.state.publicidade.list.filter(c => parseInt(this.cdAtual.id) === parseInt(c.cd_id))
+        if (publicidade.length) {
+          publicidade.forEach((p) => {
+            this.$store.commit('reproduzindo/add', {
+              id: p.id,
+              cd_id: this.cdAtual.id,
+              src: p.src,
+              type: p.origem,
+              nome: p.titulo,
+              link: p.link
+            })
+          })
+        }
+
+        for (const key in musicas) {
+          this.$store.commit('reproduzindo/add', {
+            id: musicas[key].id,
+            cd_id: musicas[key].cd_id,
+            src: musicas[key].link_musica,
+            type: 'audio/mp3',
+            nome: musicas[key].nome
+          })
+        }
+        this.$nuxt.$emit('novareproducao', 0)
+      }
+    },
     async getArtista () {
       const artista = await this.$store.state.artista.list.find(a => this.uri === a.url)
       if (artista) {
@@ -58,10 +93,7 @@ export default {
             const publicidade = r.data.publicidade
             if (publicidade.length > 0) {
               publicidade.forEach((p) => {
-                const store = this.$store.state.publicidade.list.find(a => parseInt(cdAtual.id) === parseInt(a.cd_id))
-                if (!store) {
-                  this.$store.commit('publicidade/add', p)
-                }
+                this.$store.commit('publicidade/add', p)
               })
             }
           }
@@ -76,5 +108,8 @@ export default {
 </script>
 
 <style>
-
+  .frameYoutube{
+    width: 100%;
+    height: 250px;
+  }
 </style>
