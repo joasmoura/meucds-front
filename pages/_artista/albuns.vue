@@ -91,8 +91,19 @@ export default {
             })
           }
           this.$nuxt.$emit('novareproducao', 0)
+          this.contaPlayCd(id)
         }
       }
+    },
+    contaPlayCd (id) {
+      this.$axios.get(`conta-play-cd/${id}`).then((r) => {
+        const numPlays = r.data
+        if (numPlays) {
+          this.$store.commit('artista/setPlaysCd', { cd: this.cdAtual, numPlays })
+        }
+      }).catch(() => {
+        console.log('erro')
+      })
     },
     async getArtista () {
       const artista = await this.$store.state.artista.list.find(a => this.uri === a.url)

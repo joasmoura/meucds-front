@@ -20,7 +20,7 @@
            <b-icon icon="three-dots-vertical"/>
           </template>
 
-          <b-dropdown-item :href="`${musica.link_musica}`">Baixar</b-dropdown-item>
+          <b-dropdown-item :href="`${musica.link_musica}`" :download="`${musica.link_musica}`">Baixar</b-dropdown-item>
         </b-dropdown>
       </div>
     </b-list-group-item>

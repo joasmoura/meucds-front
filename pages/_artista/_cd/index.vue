@@ -1,13 +1,13 @@
 <template>
   <div>
-    <headerArtista :artista="artista" :cd="cdAtual" v-on:ouvirCd="ouvir"/>
+    <headerArtista :artista="artista" :cd="cdAtual" v-on:ouvirCd="ouvir" v-on:baixarCd="baixarCd" :baixando="baixando"/>
 
     <b-container fluid="lg">
       <b-row class="mt-3">
         <b-col md="7">
           <h3>Músicas do album</h3>
           <b-overlay v-if="load || (artista && Object.entries(artista).length > 0) " :show="load" rounded="sm" style="min-height:200px">
-            <musicas :musicas="cdAtual.musicas" origem="cd"/>
+            <musicas :musicas="cdAtual.musicas" origem="cd" />
           </b-overlay>
         </b-col>
 
@@ -28,7 +28,8 @@ export default {
       uri: '',
       cdAtual: null,
       uriArtista: '',
-      load: false
+      load: false,
+      baixando: false
     }
   },
   created () {
@@ -69,7 +70,50 @@ export default {
           })
         }
         this.$nuxt.$emit('novareproducao', 0)
+        this.contaPlayCd()
       }
+    },
+    baixarCd () {
+      this.baixando = true
+      this.$axios.get('/baixar-cd', {
+        params: {
+          artista: this.artista.url,
+          cd: this.cdAtual.url
+        },
+        responseType: 'blob'
+      }).then((r) => {
+        const blob = new Blob([r.data], { type: 'application/zip' })
+        const link = document.createElement('a')
+        link.href = URL.createObjectURL(blob)
+        link.download = this.cdAtual.url + '.zip'
+        link.click()
+        URL.revokeObjectURL(link.href)
+        this.baixando = false
+        this.contaDownloadCd()
+      }).catch(() => {
+        this.baixando = false
+        alert('Algo deu errado ao baixar este CD!')
+      })
+    },
+    contaDownloadCd () {
+      this.$axios.get(`conta-download-cd/${this.cdAtual.id}`).then((r) => {
+        const numDownloads = r.data
+        if (numDownloads) {
+          this.$store.commit('artista/setDownloadsCd', { cd: this.cdAtual, numDownloads })
+        }
+      }).catch(() => {
+        console.log('erro')
+      })
+    },
+    contaPlayCd () {
+      this.$axios.get(`conta-play-cd/${this.cdAtual.id}`).then((r) => {
+        const numPlays = r.data
+        if (numPlays) {
+          this.$store.commit('artista/setPlaysCd', { cd: this.cdAtual, numPlays })
+        }
+      }).catch(() => {
+        console.log('erro')
+      })
     },
     async getArtista () {
       const artista = await this.$store.state.artista.list.find(a => this.uri === a.url)
@@ -99,7 +143,7 @@ export default {
           }
         }).catch((error) => {
           console.log(error)
-          // this.$router.push('/')
+          this.$router.push('/')
         })
       }
     }

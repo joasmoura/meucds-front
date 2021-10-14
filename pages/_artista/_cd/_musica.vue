@@ -1,6 +1,6 @@
 <template>
   <div>
-    <headerArtista :artista="artista" />
+    <headerArtista :artista="artista"/>
     <h1>Música</h1>
   </div>
 </template>
