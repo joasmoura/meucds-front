@@ -7,7 +7,7 @@
         <b-col md="7">
           <h3>Músicas do album</h3>
           <b-overlay v-if="load || (artista && Object.entries(artista).length > 0) " :show="load" rounded="sm" style="min-height:200px">
-            <musicas :musicas="cdAtual.musicas" origem="cd" />
+            <musicas :cd="cdAtual" :musicas="cdAtual.musicas" origem="cd" />
           </b-overlay>
         </b-col>
 
@@ -116,12 +116,13 @@ export default {
       })
     },
     async getArtista () {
-      const artista = await this.$store.state.artista.list.find(a => this.uri === a.url)
+      const artista = await this.$store.state.artista.list.find(a => this.uriArtista === a.url)
       if (artista) {
         this.artista = artista
 
         const cdAtual = artista.cds.find(cd => cd.url === this.uri)
         if (cdAtual) {
+          console.log(cdAtual)
           this.cdAtual = cdAtual
         }
       } else {
@@ -129,7 +130,7 @@ export default {
           this.$store.commit('artista/add', r.data.artista)
           this.artista = r.data.artista
           this.load = false
-
+          console.log('aqui')
           const cdAtual = this.artista.cds.find(cd => cd.url === this.uri)
           if (cdAtual) {
             this.cdAtual = cdAtual

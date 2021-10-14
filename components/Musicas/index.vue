@@ -5,7 +5,19 @@
       <div>
         <span class="p-4">{{renderNumero(key)}}</span>
 
-        <b-button :id="`musica-${key}`" class="botaoPlay" @click="ouvir(key)" v-b-tooltip.hover :title="`Escutar ${titulos(musica.nome)}`">
+        <b-button
+          v-if="$store.state.reproduzindo.currentAudio.id === musica.id"
+          class="botaoReproduzindo">
+          <b-icon icon="music-player" animation="throb" />
+        </b-button>
+
+        <b-button
+          v-else
+          :id="`musica-${key}`"
+          class="botaoPlay"
+          @click="ouvir(key)"
+          v-b-tooltip.hover
+          :title="`Escutar ${titulos(musica.nome)}`">
           <b-icon icon="play-fill" />
         </b-button>
       </div>
@@ -37,9 +49,9 @@ export default {
       mumero: 0
     }
   },
-  props: ['musicas', 'origem'],
+  props: ['musicas', 'origem', 'cd'],
   created () {
-    this.uri = this.$route.params.artista
+    this.uri = this.$route.params.cd
   },
   computed: {
 
@@ -50,11 +62,15 @@ export default {
     },
     ativaBotaoPlay (id) {
       const botao = document.getElementById(`musica-${id}`)
-      botao.style.display = 'block'
+      if (botao) {
+        botao.style.display = 'block'
+      }
     },
     desativaBotaoPlay (id) {
       const botao = document.getElementById(`musica-${id}`)
-      botao.style.display = 'none'
+      if (botao) {
+        botao.style.display = 'none'
+      }
     },
     ouvir (key) {
       this.$store.commit('reproduzindo/limpar')
@@ -95,6 +111,17 @@ export default {
           })
         })
       }
+      this.contaPlayCd()
+    },
+    contaPlayCd () {
+      this.$axios.get(`conta-play-cd/${this.cd.id}`).then((r) => {
+        const numPlays = r.data
+        if (numPlays) {
+          this.$store.commit('artista/setPlaysCd', { cd: this.cd, numPlays })
+        }
+      }).catch(() => {
+        console.log('erro')
+      })
     },
     titulos (t) {
       if (t !== '') {
@@ -102,6 +129,13 @@ export default {
           .map(word => (word[0] ? word[0].toUpperCase() : '') + word.slice(1).toLowerCase())
           .join(' ')
       }
+    },
+    ouvindo (id) {
+      const reproduzindo = this.$store.state.reproduzindo.currentAudio.id === id
+      if (reproduzindo) {
+        return true
+      }
+      return false
     }
   }
 }
@@ -141,5 +175,23 @@ export default {
 
   .botaoPlay:hover{
     background: #12C9A9;
+  }
+
+  .botaoReproduzindo{
+    position:absolute;
+    top:15px;
+    left:30px;
+    background: white;
+    color: #c50000;
+    border:none;
+    border-radius: 50%;
+    padding:0;
+    width: 40px;
+    height: 40px;
+  }
+
+  .botaoReproduzindo:visited, .botaoReproduzindo:focus{
+    background: white;
+    color: #c50000;
   }
 </style>
