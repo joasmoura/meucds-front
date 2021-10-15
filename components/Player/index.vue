@@ -64,11 +64,14 @@
           </b-col>
 
           <b-col md="4">
+            <b-button :to="`/${currentAudio.url}`" class="mt-2 play">
+              Letra
+            </b-button>
+
             <div v-show="showPlayerGeral" class="box-player-geral">
               <vue-plyr  v-show="currentAudio.type === 'audio/mp3'" ref="plyr" >
                 <video preload playsinline>
                   <div v-if="currentAudio.type === 'audio/mp3'">
-                    <!-- <source v-for="source in currentAudio" :key="source.id" :src="source.src" :type="source.type" /> -->
                     <source :src="currentAudio.src" :type="currentAudio.type" />
                   </div>
 
@@ -88,10 +91,7 @@
 export default {
   data () {
     return {
-      settings: ['captions', 'quality', 'speed', 'loop'],
-      options: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
       player: null,
-      playerVideo: null,
       reproduzindo: false,
       showPlayerGeral: false,
       mainProps: { blank: true, blankColor: '#777', width: 35, height: 35, class: 'm1' },
@@ -99,9 +99,8 @@ export default {
       duracao: '0.00',
       key: 0,
       reload: false,
-      volume: 1,
-      currentAudio: [],
-      youtubeControle: null
+      volume: 0.5,
+      currentAudio: []
     }
   },
   mounted () {
@@ -139,8 +138,8 @@ export default {
     })
   },
   methods: {
-    add () {
-
+    paginaMusica () {
+      console.log(this.$store.state.reproduzindo.currentAudio)
     },
     next () {
       if (this.key + 1 < this.$store.state.reproduzindo.list.length) {

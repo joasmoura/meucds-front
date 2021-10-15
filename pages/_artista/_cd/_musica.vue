@@ -47,7 +47,7 @@ export default {
           this.cd = cd
 
           for (const i in cd.musicas) {
-            if (cd.musicas[i].url === this.uri) {
+            if (cd.musicas[i].url === this.uriArtista + '/' + this.uriCd + '/' + this.uri) {
               this.musica = cd.musicas[i]
               break
             }
@@ -63,8 +63,9 @@ export default {
           if (cd) {
             this.cd = cd
 
+            console.log(cd.musicas)
             for (const i in cd.musicas) {
-              if (cd.musicas[i].url === this.uri) {
+              if (cd.musicas[i].url === this.uriArtista + '/' + this.uriCd + '/' + this.uri) {
                 this.musica = cd.musicas[i]
                 break
               }

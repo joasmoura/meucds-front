@@ -7,7 +7,13 @@
         <b-col md="7">
           <h3>Músicas do album</h3>
           <b-overlay v-if="load || (artista && Object.entries(artista).length > 0) " :show="load" rounded="sm" style="min-height:200px">
-            <musicas :cd="cdAtual" :musicas="cdAtual.musicas" origem="cd" />
+            <musicas
+              v-for="(musica, key) in cdAtual.musicas"
+              :key="key"
+              :id="key"
+              :musica="musica"
+              :numero="renderNumero(key)"
+              v-on:ouvir="(e) => ouvir(e)" />
           </b-overlay>
         </b-col>
 
@@ -41,7 +47,7 @@ export default {
     HeaderArtista
   },
   methods: {
-    ouvir () {
+    ouvir (k = 0) {
       const musicas = this.cdAtual.musicas
       if (Object.entries(musicas).length > 0) {
         this.$store.commit('reproduzindo/limpar')
@@ -66,10 +72,11 @@ export default {
             cd_id: musicas[key].cd_id,
             src: musicas[key].link_musica,
             type: 'audio/mp3',
-            nome: musicas[key].nome
+            nome: musicas[key].nome,
+            url: musicas[key].url
           })
         }
-        this.$nuxt.$emit('novareproducao', 0)
+        this.$nuxt.$emit('novareproducao', k)
         this.contaPlayCd()
       }
     },
@@ -130,7 +137,6 @@ export default {
           this.$store.commit('artista/add', r.data.artista)
           this.artista = r.data.artista
           this.load = false
-          console.log('aqui')
           const cdAtual = this.artista.cds.find(cd => cd.url === this.uri)
           if (cdAtual) {
             this.cdAtual = cdAtual
@@ -147,6 +153,9 @@ export default {
           this.$router.push('/')
         })
       }
+    },
+    renderNumero (key) {
+      return parseInt(key) + 1
     }
   }
 }

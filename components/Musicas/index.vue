@@ -1,9 +1,9 @@
 <template>
 <div>
   <b-list-group>
-    <b-list-group-item v-for="(musica, key) in musicas" :key="musica.id" @mouseenter="ativaBotaoPlay(key)" @mouseleave="desativaBotaoPlay(key)" class="musica d-md-flex flex-row justify-content-between  align-items-center">
+    <b-list-group-item @mouseenter="ativaBotaoPlay(id)" @mouseleave="desativaBotaoPlay(id)" class="musica d-md-flex flex-row justify-content-between  align-items-center">
       <div>
-        <span class="p-4">{{renderNumero(key)}}</span>
+        <span class="p-4">{{numero}}</span>
 
         <b-button
           v-if="$store.state.reproduzindo.currentAudio.id === musica.id"
@@ -13,16 +13,16 @@
 
         <b-button
           v-else
-          :id="`musica-${key}`"
+          :id="`musica-${id}`"
           class="botaoPlay"
-          @click="ouvir(key)"
+          @click="$emit('ouvir', id)"
           v-b-tooltip.hover
           :title="`Escutar ${titulos(musica.nome)}`">
           <b-icon icon="play-fill" />
         </b-button>
       </div>
 
-      <b-link :to="`${uri}/${musica.url}`" class="d-block w-100 text-center nome" size="sm">
+      <b-link :to="`/${musica.url}`" class="d-block w-100 text-center nome" size="sm">
         {{titulos(musica.nome)}}
       </b-link>
 
@@ -45,11 +45,10 @@ export default {
   data () {
     return {
       uri: '',
-      hoverList: '',
-      mumero: 0
+      hoverList: ''
     }
   },
-  props: ['musicas', 'origem', 'cd'],
+  props: ['musica', 'numero', 'id'],
   created () {
     this.uri = this.$route.params.cd
   },
@@ -57,8 +56,8 @@ export default {
 
   },
   methods: {
-    renderNumero (key) {
-      return parseInt(key) + 1
+    renderNumero (posicao) {
+      return parseInt(posicao) + 1
     },
     ativaBotaoPlay (id) {
       const botao = document.getElementById(`musica-${id}`)
@@ -72,7 +71,7 @@ export default {
         botao.style.display = 'none'
       }
     },
-    ouvir (key) {
+    ouvir (posicao) {
       this.$store.commit('reproduzindo/limpar')
 
       if (this.origem === 'todas') {
@@ -86,17 +85,18 @@ export default {
           })
         })
       } else if (this.origem === 'cd') {
-        for (const key in this.musicas) {
+        for (const posicao in this.musicas) {
           this.$store.commit('reproduzindo/add', {
-            id: this.musicas[key].id,
-            cd_id: this.musicas[key].cd_id,
-            src: this.musicas[key].link_musica,
+            id: this.musicas[posicao].id,
+            cd_id: this.musicas[posicao].cd_id,
+            src: this.musicas[posicao].link_musica,
             type: 'audio/mp3',
-            nome: this.musicas[key].nome
+            nome: this.musicas[posicao].nome,
+            url: this.musicas[posicao].url
           })
         }
       }
-      this.$nuxt.$emit('novareproducao', key)
+      this.$nuxt.$emit('novareproducao', posicao)
 
       const publicidade = this.$store.state.publicidade.list.filter(c => parseInt(this.musicas[0].cd_id) === parseInt(c.cd_id))
       if (publicidade.length) {

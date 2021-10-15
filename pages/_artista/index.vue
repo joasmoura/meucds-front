@@ -89,7 +89,8 @@ export default {
               cd_id: musicas[key].cd_id,
               src: musicas[key].link_musica,
               type: 'audio/mp3',
-              nome: musicas[key].nome
+              nome: musicas[key].nome,
+              url: musicas[key].url
             })
           }
           this.$nuxt.$emit('novareproducao', 0)
