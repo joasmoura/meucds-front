@@ -14,7 +14,7 @@
             <b-form-input size="sm" class="mr-sm-2 input-busca" placeholder="Faça uma busca"></b-form-input>
           </b-nav-form>
 
-          <b-nav-item to="/musicas-top" class="link-nav-topo" title="Músicas Top">Músicas</b-nav-item>
+          <!-- <b-nav-item to="/musicas-top" class="link-nav-topo" title="Músicas Top">Músicas</b-nav-item> -->
           <b-nav-item to="/artistas-top" class="link-nav-topo" title="Artistas">Artistas</b-nav-item>
           <b-nav-item to="/login" class="link-nav-topo" title="Acessar painel do usuário">Entrar</b-nav-item>
         </b-navbar-nav>
@@ -69,7 +69,7 @@
         <b-row>
           <b-col>
             <strong>Músicas</strong>
-            <b-link to="/musicas-top" class="mt-2 d-block" title="Músicas Top">Músicas Top</b-link>
+            <!-- <b-link to="/musicas-top" class="mt-2 d-block" title="Músicas Top">Músicas Top</b-link> -->
             <b-link to="/clipes-top" class="mt-2 d-block" title="Clientes Top">Clipes Top</b-link>
             <b-link to="/estilos" class="mt-2 d-block" title="Estilos Musicais">Estilos</b-link>
           </b-col>

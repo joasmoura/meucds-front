@@ -1,5 +1,8 @@
 <template>
-  <b-container>Letra: {{letra}}</b-container>
+  <b-container>
+    Artist com a letra: {{letra}}
+    <artistas :letra="letra"/>
+  </b-container>
 </template>
 
 <script>
@@ -12,6 +15,9 @@ export default {
     if (letra !== 'letra') {
       this.letra = letra
     }
+  },
+  getArtistas () {
+
   }
 }
 </script>

@@ -92,7 +92,7 @@ export default {
         const blob = new Blob([r.data], { type: 'application/zip' })
         const link = document.createElement('a')
         link.href = URL.createObjectURL(blob)
-        link.download = this.cdAtual.url + '.zip'
+        link.download = this.cdAtual.titulo + '.zip'
         link.click()
         URL.revokeObjectURL(link.href)
         this.baixando = false
@@ -129,7 +129,6 @@ export default {
 
         const cdAtual = artista.cds.find(cd => cd.url === this.uri)
         if (cdAtual) {
-          console.log(cdAtual)
           this.cdAtual = cdAtual
         }
       } else {

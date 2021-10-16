@@ -47,7 +47,7 @@ export default {
       load: false
     }
   },
-  props: ['categoria'],
+  props: ['categoria', 'letra'],
   watch: {
     currentPage (val) {
       this.getArtistas()
@@ -63,7 +63,7 @@ export default {
     async getArtistas () {
       this.load = true
       this.scrollTop()
-      await this.$axios.get(`artistas?page=${(this.$route.query.page ? this.$route.query.page : 1)}`, {
+      await this.$axios.get(`${(this.letra ? `/artistas-letra/${this.letra.toLowerCase()}` : 'artistas')}?page=${(this.$route.query.page ? this.$route.query.page : 1)}`, {
         params: {
           categoria: this.categoria
         }
