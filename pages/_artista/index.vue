@@ -90,7 +90,8 @@ export default {
               src: musicas[key].link_musica,
               type: 'audio/mp3',
               nome: musicas[key].nome,
-              url: musicas[key].url
+              url: musicas[key].url,
+              capa: cd.capa_mini
             })
           }
           this.$nuxt.$emit('novareproducao', 0)
@@ -121,10 +122,7 @@ export default {
           const publicidade = r.data.publicidade
           if (publicidade.length > 0) {
             publicidade.forEach((p) => {
-              // const store = this.$store.state.publicidade.list.find(a => parseInt(p.cd_id) === parseInt(a.cd_id))
-              // if (!store) {
               this.$store.commit('publicidade/add', p)
-              // }
             })
           }
         }).catch((error) => {

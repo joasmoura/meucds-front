@@ -105,7 +105,8 @@ export default {
             src: musicas[key].link_musica,
             type: 'audio/mp3',
             nome: musicas[key].nome,
-            url: musicas[key].url
+            url: musicas[key].url,
+            capa: this.cdAtual.capa_mini
           })
         }
         this.$nuxt.$emit('novareproducao', this.keyMusica)

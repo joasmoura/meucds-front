@@ -125,7 +125,8 @@ export default {
               nome: c.nome,
               url: c.url,
               mostra: (i <= 4),
-              active: (url === '/categoria' + c.url || url === '/artistas-top' + c.url)
+              active: (url === '/categoria' + c.url || url === '/artistas-top' + c.url),
+              img: c.img
             })
 
             return c

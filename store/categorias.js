@@ -4,12 +4,7 @@ export const state = () => ({
 
 export const mutations = {
   add (state, categoria) {
-    state.list.push({
-      nome: categoria.nome,
-      url: categoria.url,
-      active: categoria.active,
-      mostra: categoria.mostra
-    })
+    state.list.push(categoria)
   },
   sort (state, url) {
     const categorias = state.list

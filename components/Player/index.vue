@@ -5,7 +5,8 @@
         <b-row class="w-100">
           <b-col md="4">
             <div class="flex-fill box-actions mt-2">
-              <b-img v-bind="mainProps" rounded alt="" />
+              <b-img v-bind="mainProps" :src="currentAudio.capa" rounded alt="" />
+
               <b-button @click="prev">
                 <b-icon icon="skip-start-fill"/>
               </b-button>
@@ -14,7 +15,7 @@
                 <b-icon icon="play-fill"/>
               </b-button>
 
-              <b-button v-if="reproduzindo" @click="pause">
+              <b-button v-if="reproduzindo" @click="pause" class="pause">
                 <b-icon icon="pause"/>
               </b-button>
 
@@ -63,9 +64,9 @@
             </div>
           </b-col>
 
-          <b-col md="4">
-            <b-button :to="`/${currentAudio.url}`" class="mt-2 play">
-              Letra
+          <b-col md="4" class="box-direito">
+            <b-button :to="`/${currentAudio.url}`" class="mt-2 button-letra">
+              LETRA
             </b-button>
 
             <div v-show="showPlayerGeral" class="box-player-geral">
@@ -94,7 +95,7 @@ export default {
       player: null,
       reproduzindo: false,
       showPlayerGeral: false,
-      mainProps: { blank: true, blankColor: '#777', width: 35, height: 35, class: 'm1' },
+      mainProps: { blankColor: '#777', width: 35, height: 35, class: 'm1' },
       tempoAtual: '0.00',
       duracao: '0.00',
       key: 0,
@@ -223,7 +224,8 @@ export default {
             src: currentAudio.src,
             type: currentAudio.type,
             nome: currentAudio.nome,
-            link: currentAudio.link
+            link: currentAudio.link,
+            capa: currentAudio.capa
           }
           this.update()
         } else if (currentAudio.type === 'audio/mp3') {
@@ -282,7 +284,13 @@ export default {
     background: #222 !important;
   }
 
-  .box-actions .play{
+  .box-actions .play, .box-actions .pause{
+    padding: 1px 5px;
+  }
+
+  .box-actions .play svg, .box-actions .pause svg{
+    font-size: 35px !important;
+    /* width: 30px; */
   }
 
   .nome-reproduzindo{
@@ -349,5 +357,11 @@ export default {
   .botao-publicidade:hover{
     background: #F9CA53;
     color:#222;
+  }
+
+  .box-direito .button-letra{
+    border: 0.5px solid #00c5a2;
+    background: #222 !important;
+    font-size: 13px;
   }
 </style>
