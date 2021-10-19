@@ -75,7 +75,9 @@ export default {
     }
   },
   created () {
-
+    if (this.$auth.loggedIn) {
+      this.$router.push('/conta')
+    }
   },
   methods: {
     containerAdd () {
@@ -93,14 +95,6 @@ export default {
         password: this.password
       }).then((r) => {
         if (r.data.status) {
-          // Swall.fire({
-          //   title: 'Sucesso',
-          //   text: 'Registro efetuado com sucesso!',
-          //   icon: 'success',
-          //   timer: '1500'
-          // }).then(() => {
-          // })
-
           if (r.data.user) {
             this.$auth.setUser(r.data.user)
             this.$auth.setUserToken(r.data.authenticationToken)
@@ -113,11 +107,6 @@ export default {
         }
       }).catch((erro) => {
         alert('Algo deu errado ao cadastrar!')
-        // Swall.fire({
-        //   title: 'Erro',
-        //   text: 'Não foi possível realizar seu registro, everifique se seus dados estão corretos!',
-        //   icon: 'error'
-        // })
       })
     },
     async login () {
