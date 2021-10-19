@@ -3,7 +3,7 @@
     <h2>CADASTRE - SE GRÁTIS </h2>
     <div class="container-form" id="container">
       <div class="form-container sign-up-container">
-        <form action="#">
+        <form @submit.prevent="registrar">
           <h1>Criar Conta</h1>
 
           <div class="social-container">
@@ -12,26 +12,26 @@
           </div>
 
           <span>Escolha uma foto de perfil</span>
-          <input type="file" id="foto" name="foto_usuario" accept="image/*" defaultValue="insira a foto padrão">
-          <input type="text" placeholder="Name" />
-          <input type="email" placeholder="Email" />
-          <input type="senha" placeholder="senha" />
-          <b-button>Cadastre - se</b-button>
+          <input type="file" id="foto" name="foto_usuario" accept="image/*" defaultValue="Insira a foto padrão">
+          <input type="text" v-model="name" placeholder="Nome" />
+          <input type="email" v-model="email" placeholder="Email" />
+          <input type="password" v-model="password" placeholder="Senha" />
+          <b-button type="submit">Cadastre - se</b-button>
         </form>
       </div>
 
       <div class="form-container sign-in-container">
-        <form action="#">
+        <form @submit.prevent="login">
           <h1>Entrar</h1>
           <div class="social-container">
             <a href="#" class="social"><b-icon icon="facebook" /></a>
             <a href="#" class="social"><b-icon icon="google" /></a>
           </div>
           <span>Ou use sua conta</span>
-          <input type="email" placeholder="Email" />
-          <input type="senha" placeholder="senha" />
-          <a href="#">Esqueceu sua senha?</a>
-          <b-button>Entrar</b-button>
+          <input type="email" v-model="email" placeholder="Email" />
+          <input type="password" v-model="password" placeholder="senha" />
+          <a href="javascript: void(0)" @click="modalRecuperarSenha = true">Esqueceu sua senha?</a>
+          <b-button type="submit">Entrar</b-button>
         </form>
       </div>
 
@@ -51,6 +51,15 @@
         </div>
       </div>
     </div>
+
+    <b-modal v-model="modalRecuperarSenha" centered title="Recuperar Senha" hide-footer>
+      <input type="email" v-model="email" placeholder="Email" class="form-control"/>
+
+      <div class="d-flex flex-row justify-content-between my-3">
+        <div><b-button variant="success" @click="recuperar">Confirmar</b-button></div>
+        <div><b-button variant="danger">Cancelar</b-button></div>
+      </div>
+    </b-modal>
   </b-container>
 </template>
 
@@ -58,7 +67,11 @@
 export default {
   data () {
     return {
-      email: ''
+      name: '',
+      email: '',
+      password: '',
+      foto: '',
+      modalRecuperarSenha: false
     }
   },
   created () {
@@ -73,11 +86,63 @@ export default {
       const container = document.getElementById('container')
       container.classList.remove('right-panel-active')
     },
-    onSubmit () {
+    async registrar () {
+      await this.$axios.post('/registrar', {
+        name: this.name,
+        email: this.email,
+        password: this.password
+      }).then((r) => {
+        if (r.data.status) {
+          // Swall.fire({
+          //   title: 'Sucesso',
+          //   text: 'Registro efetuado com sucesso!',
+          //   icon: 'success',
+          //   timer: '1500'
+          // }).then(() => {
+          // })
 
+          if (r.data.user) {
+            this.$auth.setUser(r.data.user)
+            this.$auth.setUserToken(r.data.authenticationToken)
+            this.$router.push('/conta')
+          } else {
+            this.$router.push('/login')
+          }
+        } else {
+          alert('Algo deu errado ao cadastrar!')
+        }
+      }).catch((erro) => {
+        alert('Algo deu errado ao cadastrar!')
+        // Swall.fire({
+        //   title: 'Erro',
+        //   text: 'Não foi possível realizar seu registro, everifique se seus dados estão corretos!',
+        //   icon: 'error'
+        // })
+      })
     },
-    onReset () {
-
+    async login () {
+      await this.$auth.loginWith('local', {
+        data: {
+          email: this.email,
+          password: this.password
+        }
+      }).then(() => {
+        console.log('Sucesso')
+      }).catch((erro) => {
+        console.log('Erro')
+        console.log(erro)
+      })
+    },
+    async recuperar () {
+      await this.$axios.post('recuperar-senha', {
+        email: this.email
+      }).then((r) => {
+        if (r.data.status) {
+          alert('Enviaremos para sua caixa de email as instruções para recuperar sua senha!')
+        } else {
+          alert('Não foi possível encontrar sua conta! Verifique se seu email está correto!')
+        }
+      })
     }
   }
 }
