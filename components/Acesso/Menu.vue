@@ -4,13 +4,17 @@
     <b-list-group-item href="#" >Meus dados</b-list-group-item>
     <b-list-group-item href="#">Favoritos</b-list-group-item>
     <b-list-group-item href="#">Playlists</b-list-group-item>
-    <b-list-group-item to="/conta/sair">Sair</b-list-group-item>
+    <b-list-group-item href="#" @click="sair">Sair</b-list-group-item>
   </b-list-group>
 </template>
 
 <script>
 export default {
-
+  methods: {
+    sair () {
+      this.$auth.logout()
+    }
+  }
 }
 </script>
 
