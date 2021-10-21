@@ -8,7 +8,7 @@
       <h1>Nova senha</h1>
       <input type="password" v-model="password" class="form-control" placeholder="Senha">
       <input type="password" v-model="password_confirmation" class="form-control" placeholder="Confirmar Senha">
-      <b-button type="submit">Confirmar</b-button>
+      <b-button type="submit" class="botao">Confirmar</b-button>
     </form>
   </template>
 

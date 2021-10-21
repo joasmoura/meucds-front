@@ -1,13 +1,12 @@
 <template>
-    <b-container>
-        <banner />
-
-        <b-row>
-            <b-col md="3">
+    <b-container fluid class="">
+        <b-row align-v="stretch">
+            <b-col md="2"  class="bg-light">
                 <Menu />
             </b-col>
 
-            <b-col md="9">
+            <b-col md="10">
+                <banner />
             </b-col>
         </b-row>
     </b-container>

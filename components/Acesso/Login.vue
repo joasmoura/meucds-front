@@ -167,9 +167,9 @@ export default {
   }
 
   .overlay {
-    background: #00C5A2;
-    background: -webkit-linear-gradient(to right, #00C5A2, #02AE8F);
-    background: linear-gradient(to right, #00C5A2, #02AE8F);
+    background: #FF416C;
+    background: -webkit-linear-gradient(to right, #FF4B2B, #FF416C);
+    background: linear-gradient(to right, #FF4B2B, #FF416C);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: 0 0;

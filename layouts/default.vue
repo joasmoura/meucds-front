@@ -3,7 +3,7 @@
   <b-navbar toggleable="lg" type="light" variant="light" class="navbar-topo">
     <b-container fluid="sm">
       <b-navbar-brand to="/" title="Págiina inicial do Meu Cds">
-        <b-img :src="require('../static/meucds-logomarca.png')" width="150px" alt="Logo Meu Cds"></b-img>
+        <b-img :src="require('../static/meucds-logotipo-branca.png')" width="150px" alt="Logo Meu Cds"></b-img>
       </b-navbar-brand>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -21,7 +21,7 @@
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
-          <b-nav-item size="sm" class="btn btn-sm btn-success botao-up px-5 py-0" to="/login" >Upload</b-nav-item>
+          <b-nav-item size="sm" class="btn btn-sm btn-success botao px-5 py-0" to="/login" >Upload</b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-container>
@@ -89,7 +89,7 @@
           </b-col>
 
           <b-col>
-            <b-link to="#foo" class="btn botao-up btn-divulgue px-5" title="Divulgue aqui">DIVULGUE</b-link>
+            <b-link to="#foo" class="btn botao btn-divulgue px-5" title="Divulgue aqui">DIVULGUE</b-link>
           </b-col>
         </b-row>
       </b-container>
@@ -168,9 +168,9 @@ export default {
   }
 
   .input-busca{width: 500px !important; border-radius:5px;}
-  .botao-up{background: #00C5A2; border:none; border-radius:20px;}
-  .botao-up:hover{background: #02AE8F; }
-  .botao-up a{color:#FFF !important;}
+  .botao{background: #FF416C; border:none; border-radius:20px;}
+  .botao:hover{background: #FF4B2B; }
+  .botao a{color:#FFF !important;}
 
   .btn-divulgue{color:#FFF !important;}
 
@@ -198,6 +198,10 @@ export default {
 
   .lista-alfabeto a:hover {
     color:#242222;
+  }
+
+  .border-white{
+    border: 1px solid #FFF;
   }
 
   @media screen and (max-width: 480px) {

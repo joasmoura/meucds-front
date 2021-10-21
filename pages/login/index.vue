@@ -14,14 +14,34 @@
           <input type="text" v-model="name" placeholder="Nome" />
           <input type="email" v-model="email" placeholder="Email" />
           <input type="password" v-model="password" placeholder="Senha" />
-          <b-button type="submit">Cadastre - se</b-button>
+          <b-overlay
+            :show="registrando"
+            rounded
+            opacity="0.6"
+            spinner-small
+            spinner-variant="primary"
+            class="d-inline-block"
+          >
+            <b-button type="submit" class="botao">Cadastre-se</b-button>
+          </b-overlay>
         </form>
 
          <b-modal v-model="modalRecuperarSenha" centered title="Recuperar Senha" hide-footer>
-          <input type="email" v-model="email" placeholder="Email" class="form-control"/>
+          <input type="email" v-model="email" @change="recuperar" placeholder="Email" class="form-control"/>
 
           <div class="d-flex flex-row justify-content-between my-3">
-            <div><b-button variant="success" @click="recuperar">Confirmar</b-button></div>
+            <div>
+              <b-overlay
+                :show="enviando"
+                rounded
+                opacity="0.6"
+                spinner-small
+                spinner-variant="primary"
+                class="d-inline-block"
+              >
+                <b-button variant="success" @click="recuperar" v-bind:disabled="enviando">Confirmar</b-button>
+              </b-overlay>
+            </div>
             <div><b-button variant="danger" @click="modalRecuperarSenha = false">Cancelar</b-button></div>
           </div>
         </b-modal>
@@ -38,20 +58,29 @@
         <input type="email" v-model="email" placeholder="Email" />
         <input type="password" v-model="password" placeholder="senha" />
         <a href="javascript: void(0)" @click="modalRecuperarSenha = true">Esqueceu sua senha?</a>
-        <b-button type="submit">Entrar</b-button>
+        <b-overlay
+          :show="entrando"
+          rounded
+          opacity="0.6"
+          spinner-small
+          spinner-variant="primary"
+          class="d-inline-block"
+        >
+          <b-button type="submit" class="botao">Entrar</b-button>
+        </b-overlay>
       </form>
     </template>
 
     <template v-slot:left>
       <h1>Bem vindo de volta!</h1>
       <p>Para se manter conectado conosco, faça o login com suas informações pessoais</p>
-      <b-button class="ghost" id="signIn" @click="$emit('containerRemove')">Entrar</b-button>
+      <b-button class="ghost botao border-white" id="signIn" @click="$emit('containerRemove')">Entrar</b-button>
     </template>
 
     <template v-slot:right>
       <h1>Meu Cds</h1>
       <p>Insira seus dados pessoais e faça parte de nosso time</p>
-      <b-button class="ghost" id="signUp" @click="$emit('containerAdd')">Cadastre - se</b-button>
+      <b-button class="ghost botao border-white" id="signUp" @click="$emit('containerAdd')">Cadastre - se</b-button>
     </template>
   </login>
 </template>
@@ -67,7 +96,10 @@ export default {
       email: '',
       password: '',
       foto: null,
-      modalRecuperarSenha: false
+      modalRecuperarSenha: false,
+      enviando: false,
+      registrando: false,
+      entrando: false
     }
   },
   created () {
@@ -75,6 +107,7 @@ export default {
   },
   methods: {
     async registrar () {
+      this.registrando = true
       const form = new FormData()
       form.append('name', this.name)
       form.append('email', this.email)
@@ -100,7 +133,9 @@ export default {
             timer: 2000
           })
         }
+        this.registrando = false
       }).catch((e) => {
+        this.registrando = false
         const erros = e.response.data
         if (erros) {
           for (const erro in erros.errors) {
@@ -117,6 +152,7 @@ export default {
       })
     },
     async login () {
+      this.entrando = true
       await this.$auth.loginWith('local', {
         data: {
           email: this.email,
@@ -124,7 +160,9 @@ export default {
         }
       }).then(() => {
         console.log('Sucesso')
+        this.entrando = false
       }).catch((e) => {
+        this.entrando = false
         const erros = e.response.data
         if (erros.errors) {
           for (const erro in erros.errors) {
@@ -136,6 +174,7 @@ export default {
       })
     },
     async recuperar () {
+      this.enviando = true
       await this.$axios.post('recuperar-senha', {
         email: this.email
       }).then((r) => {
@@ -152,6 +191,9 @@ export default {
             icon: 'error'
           })
         }
+
+        this.modalRecuperarSenha = false
+        this.enviando = false
       })
     },
 

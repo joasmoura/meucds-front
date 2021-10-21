@@ -329,11 +329,11 @@ export default {
   }
 
   .custom-range::-moz-range-thumb, .custom-range::-webkit-slider-runnable-track {
-    background: #00c5a2;
+    background: #FF416C;
   }
 
   .custom-range .progress-bar{
-    background: #00c5a2 !important;
+    background: #FF416C !important;
   }
 
   .box-player-geral{
@@ -344,7 +344,7 @@ export default {
     bottom: 0;
     height: 300px !important;
     padding-bottom: 0;
-    background: #00c5a2;
+    background: #FF416C;
   }
 
   .botao-publicidade{
@@ -360,7 +360,7 @@ export default {
   }
 
   .box-direito .button-letra{
-    border: 0.5px solid #00c5a2;
+    border: 0.5px solid #FF416C;
     background: #222 !important;
     font-size: 13px;
   }
