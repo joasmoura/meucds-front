@@ -329,11 +329,11 @@ export default {
   }
 
   .custom-range::-moz-range-thumb, .custom-range::-webkit-slider-runnable-track {
-    background: #FF416C;
+    background: #FF416C !important;
   }
 
-  .custom-range .progress-bar{
-    background: #FF416C !important;
+  .progress-bar{
+    background: #FF4B2B !important;
   }
 
   .box-player-geral{

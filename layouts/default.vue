@@ -3,7 +3,7 @@
   <b-navbar toggleable="lg" type="light" variant="light" class="navbar-topo">
     <b-container fluid="sm">
       <b-navbar-brand to="/" title="Págiina inicial do Meu Cds">
-        <b-img :src="require('../static/meucds-logotipo-branca.png')" width="150px" alt="Logo Meu Cds"></b-img>
+        <b-img :src="require('../static/meucds-logotipo-branca.png')" width="150px" alt="Logo Meu Cds"/>
       </b-navbar-brand>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -20,8 +20,8 @@
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->
-        <b-navbar-nav class="ml-auto">
-          <b-nav-item size="sm" class="btn btn-sm btn-success botao px-5 py-0" to="/login" >Upload</b-nav-item>
+        <b-navbar-nav class="ml-auto" @click="upload">
+          <b-nav-item size="sm" class="btn btn-sm btn-success botao px-5 py-0" >Upload</b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-container>
@@ -63,7 +63,7 @@
         </div>
       </b-container>
 
-      <hr class="m-0">
+      <hr class="m-0" />
 
       <b-container class="py-5 links-rodape" fluid="sm">
         <b-row>
@@ -114,25 +114,34 @@ export default {
   },
   scrollToTop: true,
   methods: {
+    upload () {
+      if (this.$auth.loggedIn) {
+        this.$router.push('/conta/cd/form')
+      } else {
+        this.$router.push('/login')
+      }
+    },
     async getCategorias () {
       const url = this.$nuxt._route.path
-
-      await this.$axios.get('categorias').then((r) => {
-        const categorias = r.data
-        if (categorias) {
-          categorias.map((c, i) => {
-            this.$store.commit('categorias/add', {
-              nome: c.nome,
-              url: c.url,
-              mostra: (i <= 4),
-              active: (url === '/categoria' + c.url || url === '/artistas-top' + c.url),
-              img: c.img
+      const categorias = this.$store.state.categorias.list
+      if (!categorias.length) {
+        await this.$axios.get('categorias').then((r) => {
+          const categorias = r.data
+          if (categorias.length) {
+            categorias.map((c, i) => {
+              this.$store.commit('categorias/add', {
+                id: c.id,
+                nome: c.nome,
+                url: c.url,
+                mostra: (i <= 4),
+                active: (url === '/categoria' + c.url || url === '/artistas-top' + c.url),
+                img: c.img
+              })
+              return c
             })
-
-            return c
-          })
-        }
-      })
+          }
+        })
+      }
     },
     musicasPadrao () {
       const musicas = this.$store.state.reproduzindo.list

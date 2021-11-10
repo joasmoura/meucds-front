@@ -9,9 +9,25 @@
             <a href="#" class="social"><b-icon icon="google" /></a>
           </div>
 
-          <span>Escolha uma foto de perfil</span>
-          <input type="file" @change="changeFoto" name="foto_usuario" accept="image/*" defaultValue="Insira a foto padrão">
+          <div class="d-flex flex-row align-items-center mt-2 mb-2">
+            <span class="mr-3">Escolha uma foto de perfil </span>
+            <label for="foto_usuario" style="cursor:pointer">
+              <input type="file" id="foto_usuario" @change="changeFoto" accept="image/*" class="d-none">
+              <b-avatar size="72px" :src="(previewFoto ? previewFoto : '')" class="avatar mt-1"></b-avatar>
+            </label>
+          </div>
+
           <input type="text" v-model="name" placeholder="Nome" />
+          <b-form-group label="" >
+            <b-form-radio-group
+              v-model="tipo"
+              :options="tipos"
+              button-variant="outline-primary"
+              size="md"
+              buttons
+            ></b-form-radio-group>
+          </b-form-group>
+
           <input type="email" v-model="email" placeholder="Email" />
           <input type="password" v-model="password" placeholder="Senha" />
           <b-overlay
@@ -96,10 +112,16 @@ export default {
       email: '',
       password: '',
       foto: null,
+      previewFoto: '',
       modalRecuperarSenha: false,
       enviando: false,
       registrando: false,
-      entrando: false
+      entrando: false,
+      tipo: 'D',
+      tipos: [
+        { value: 'D', text: 'Sou Divulgador' },
+        { value: 'A', text: 'Sou Artista' }
+      ]
     }
   },
   created () {
@@ -110,6 +132,7 @@ export default {
       this.registrando = true
       const form = new FormData()
       form.append('name', this.name)
+      form.append('tipo', this.tipo)
       form.append('email', this.email)
       form.append('password', this.password)
       if (this.foto) {
@@ -128,7 +151,7 @@ export default {
         } else {
           Swal.fire({
             title: 'Erro',
-            text: 'Alco deu errado ao cadastrar!',
+            text: 'Algo deu errado ao cadastrar!',
             icon: 'warning',
             timer: 2000
           })
@@ -197,8 +220,18 @@ export default {
       })
     },
 
-    changeFoto (event) {
-      this.foto = event.target.files[0]
+    changeFoto (e) {
+      const arquivo = e.target.files || e.dataTransfer.files
+      if (!arquivo.length) {
+        return
+      }
+
+      this.foto = arquivo[0]
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        this.previewFoto = e.target.result
+      }
+      reader.readAsDataURL(arquivo[0])
     }
   }
 }

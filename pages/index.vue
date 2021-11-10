@@ -1,5 +1,6 @@
 <template>
 <div>
+  <h1>teste ca</h1>
   <pingos-categoria path="/categoria/" />
   <destaque-home categoria="" />
 </div>
@@ -12,6 +13,8 @@ export default {
 
   components: {
     DestaqueHome, PingosCategoria
+  },
+  created () {
   }
 }
 </script>

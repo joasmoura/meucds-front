@@ -3,7 +3,7 @@
     <b-col md="9">
       <b-overlay v-if="load || Object.entries(artistas).length > 0 " :show="load" rounded="sm" style="min-height:200px">
         <b-row v-if="Object.entries(artistas).length > 0">
-          <b-col v-for="artista in artistas" :key="artista.id" md="3">
+          <b-col v-for="artista in artistas" :key="artista.id" md="3" v-once>
             <b-link :to="`/${artista.url}`" class="link-artista">
               <b-card
                 :title="titulos(artista.nome)"

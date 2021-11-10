@@ -102,20 +102,20 @@ export default {
           }
         }).then((r) => {
           const banners = r.data
-
-          if (banners) {
+          console.log('banners', banners)
+          if (banners.length) {
             this.montarBanner(banners)
-            const banner1 = banners.find(b => parseInt(b.ordem) === 1)
-            const banner2 = banners.find(b => parseInt(b.ordem) === 2)
-            const banner3 = banners.find(b => parseInt(b.ordem) === 3)
-            const banner4 = banners.find(b => parseInt(b.ordem) === 4)
+            // const banner1 = banners.find(b => parseInt(b.ordem) === 1)
+            // const banner2 = banners.find(b => parseInt(b.ordem) === 2)
+            // const banner3 = banners.find(b => parseInt(b.ordem) === 3)
+            // const banner4 = banners.find(b => parseInt(b.ordem) === 4)
 
-            if (banner1) { this.$store.commit('banner/add', banner1) }
-            if (banner2) { this.$store.commit('banner/add', banner2) }
-            if (banner3) { this.$store.commit('banner/add', banner3) }
-            if (banner4) { this.$store.commit('banner/add', banner4) }
+            // if (banner1) { this.$store.commit('banner/add', banner1) }
+            // if (banner2) { this.$store.commit('banner/add', banner2) }
+            // if (banner3) { this.$store.commit('banner/add', banner3) }
+            // if (banner4) { this.$store.commit('banner/add', banner4) }
 
-            console.log(banner1)
+            // console.log(banner1)
           }
           this.load = false
         })
