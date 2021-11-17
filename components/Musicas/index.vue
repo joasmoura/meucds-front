@@ -99,7 +99,7 @@ export default {
       this.$nuxt.$emit('novareproducao', posicao)
 
       const publicidade = this.$store.state.publicidade.list.filter(c => parseInt(this.musicas[0].cd_id) === parseInt(c.cd_id))
-      if (publicidade.length) {
+      if (Array.from(publicidade).length) {
         publicidade.forEach((p) => {
           this.$store.commit('reproduzindo/add', {
             id: p.id,

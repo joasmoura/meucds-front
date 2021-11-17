@@ -1,11 +1,11 @@
 <template>
 <Acesso>
-  <div class="d-flex flex-row justify-items-center">
+  <div class="d-flex flex-row justify-content-between justify-items-center">
+      <h3>{{id ? 'Editar CD' : 'Cadastrar CD'}}</h3>
       <b-button to="/conta" variant="link"><b-icon icon="arrow-left" /> Voltar</b-button>
-      <h3>Cadastrar CD</h3>
   </div>
 
-  <b-form @submit.prevent="salvar">
+  <b-form @submit.prevent="salvar" class=" mb-5">
      <b-card no-body class="w-75 m-auto card-upload">
       <b-tabs v-model="tabIndex" small card justified>
         <b-tab title="1">
@@ -124,33 +124,37 @@
             </b-col>
 
             <b-col md="3">
+              <span class="ident-capa">Capa</span>
               <b-card
-                title="imagem"
-                :img-src="(previewCapa ? previewCapa : '~static/capa-cd.jpg')"
+                title=""
+                :img-src="(previewCapa ? previewCapa : '/capa-cd.jpg')"
                 img-alt=""
                 img-top
                 tag="article"
-                style="max-width: 20rem;"
-                class="mb-2 capa"
+                style="max-width: 20rem; cursor:pointer;"
+                class="mb-0 capa"
+                @click="selecionarCapa"
               >
                 <b-card-text class="d-flex p-0 m-0">
                   <input type="file" id="capa" class="d-none" accept="image/*" @change="carregaCapa">
-                  <b-button variant="primary" class="btn-sm" title="Selecionar Imagem" @click="selecionarCapa"><b-icon icon="plus"></b-icon></b-button>
                 </b-card-text>
               </b-card>
+              <span v-if="previewCapa" class="cancel-capa" @click="cancelCapa"><b-icon icon="trash" /></span>
             </b-col>
           </b-row>
         </b-tab>
 
         <b-tab title="4">
           <div v-if="nomes.length">
-            <Upload v-for="(n, key) in nomes" :key="key" :i="key" v-on:remover="(k) => removerMp3(k)" :remover="false">
-              <template v-slot:numero>{{montaNumero(key)}}</template>
-              <template v-slot:input>
-                <span>{{n.nome}}</span>
-                <b-progress min="0" max="100" v-model="n.progress" class="w-100"/>
-              </template>
-            </Upload>
+            <div v-for="(n, key) in nomes" :key="key">
+              <Upload v-if="!n.id" :i="key" v-on:remover="(k) => removerMp3(k)" :remover="false">
+                <template v-slot:numero>{{montaNumero(key)}}</template>
+                <template v-slot:input>
+                  <span>{{n.nome}}</span>
+                  <b-progress min="0" max="100" v-model="n.progress" class="w-100"/>
+                </template>
+              </Upload>
+            </div>
           </div>
         </b-tab>
       </b-tabs>
@@ -159,18 +163,25 @@
     <!-- Control buttons-->
     <div class="text-center">
       <b-button-group class="mt-2">
-        <b-button @click="tabIndex--">Anterior</b-button>
-        <b-button @click="tabIndex++">Próximo</b-button>
+        <b-button @click="proximo" v-if="tabIndex === 0" class="btn-upload">PRÓXIMO</b-button>
+        <b-overlay
+            :show="salvando"
+            rounded
+            opacity="0.6"
+            spinner-small
+            spinner-variant="primary"
+            class="d-inline-block"
+          >
+          <b-button type="submit" v-if="tabIndex == 1" class="btn-upload">{{(id ? 'SALVAR' : 'FINALIZAR')}}</b-button>
+        </b-overlay>
       </b-button-group>
-
-      <div class="text-muted">Current Tab: {{ tabIndex }}</div>
     </div>
-    <b-button type="submit">Salvar cd</b-button>
   </b-form>
 </Acesso>
 </template>
 
 <script>
+import Swal from 'sweetalert2'
 import Acesso from '@/components/Acesso'
 import Upload from '@/components/Acesso/Upload'
 
@@ -205,7 +216,8 @@ export default {
       horaPublicacao: '',
       youtube: '',
       capa: '',
-      previewCapa: ''
+      previewCapa: '',
+      salvando: false
     }
   },
   components: { Acesso, Upload },
@@ -221,11 +233,41 @@ export default {
     }
   },
   methods: {
+    proximo () {
+      if (this.nomes.length) {
+        this.tabIndex++
+      } else {
+        Swal.fire({
+          title: 'Alerta',
+          text: 'Necessário selecionar as músicas do cd!',
+          icon: 'warning'
+        })
+      }
+    },
     getCd () {
+      this.tabIndex++
       this.$axios.get(`/cds/${this.id}/edit`).then((r) => {
-        const cd = r.data
+        const cd = r.data.cd
         if (cd) {
-          console.log(cd)
+          this.titulo = cd.titulo
+          this.artista = cd.artista
+          this.descricao = cd.texto
+          this.categoria = cd.categoria_id
+          this.youtube = cd.youtube
+          this.publicacao = cd.publicacao
+          this.tipoPublicacao = cd.tipo_publicacao
+          this.previewCapa = cd.capa_mini
+
+          if (Array.from(cd.musicas).length) {
+            this.nomes = cd.musicas.map((m) => {
+              return {
+                id: m.id,
+                nome: m.nome.replace('.mp3', '').replace('.MP3', '')
+              }
+            })
+          }
+        } else {
+          this.tabIndex = 0
         }
       })
     },
@@ -235,7 +277,7 @@ export default {
     async getCategorias () {
       const url = this.$nuxt._route.path
       const categorias = this.$store.state.categorias.list
-      if (categorias.length) {
+      if (Array.from(categorias).length) {
         this.categorias = categorias.map((c) => {
           return {
             name: c.nome,
@@ -245,7 +287,7 @@ export default {
       } else {
         await this.$axios.get('categorias').then((r) => {
           const categorias = r.data
-          if (categorias) {
+          if (Array.from(categorias).from) {
             categorias.map((c, i) => {
               this.$store.commit('categorias/add', {
                 id: c.id,
@@ -268,6 +310,17 @@ export default {
       }
     },
     salvar () {
+      if (!this.titulo || !this.artista || !this.categoria) {
+        Swal.fire({
+          title: 'Alerta',
+          text: 'Os campos marcados com * são obrigatórios!',
+          icon: 'warning'
+        })
+
+        return
+      }
+
+      this.salvando = true
       if (this.id) {
         this.atualizar()
       } else {
@@ -310,21 +363,32 @@ export default {
 
           await this.$axios.post(`cds/upload/${cdId}`, form, {
             onUploadProgress: (u) => {
-              console.log(Math.round(u.loaded * 100 / u.total))
               this.nomes[i].progress = Math.round(u.loaded * 100 / u.total)
             }
           }).then(() => {
-
+            if (i === (this.musicas.length - 1)) {
+              Swal.fire({
+                text: 'Cd cadastrado com sucesso!',
+                icon: 'success'
+              })
+              this.$router.push(`/conta/cd/${cdId}`)
+            }
+          }).catch((e) => {
+            Swal.fire({
+              title: 'Erro',
+              text: 'Não foi possível cadastrar esse cd. Caso o erro persista, entre em contato conosco!',
+              icon: 'error'
+            })
           })
         }
       }
+      this.salvando = false
     },
     selectAudios (e) {
       const musicas = e.target.files || e.dataTransfer.files
       if (musicas.length) {
         musicas.forEach((m) => {
           this.musicas.push(m)
-          console.log(m.name)
           this.nomes.push({
             nome: m.name.replace('.mp3', ''),
             progress: 0
@@ -356,6 +420,10 @@ export default {
       }
       reader.readAsDataURL(arquivo[0])
     },
+    cancelCapa () {
+      this.previewCapa = ''
+      this.capa = ''
+    },
     montaNumero (n) {
       const numero = n + 1
       return numero
@@ -365,6 +433,34 @@ export default {
 </script>
 
 <style>
+  .card-upload .nav-link{
+    background: #f2f2f2;
+    border-radius:100%;
+    display: inline-block;
+    width: 40px !important;
+    height: 40px !important;
+    border:none;
+    z-index: 5;
+    position: relative;
+    padding:10px;
+  }
+
+  .card-upload .nav-tabs::before{
+    content: "";
+    position:absolute;
+    width:65%;
+    background: #f2f2f2;
+    height: 1px;
+    top:30px;
+    left:18%;
+    z-index: 1;
+  }
+
+  .card-upload .nav-link.active{
+    background: #FF416C;
+    color:#FFF;
+  }
+
   .card-upload{
     border: none;
   }
@@ -439,5 +535,37 @@ export default {
 
   .capa .card-body{
     padding: 0;
+    margin: 0;
+  }
+
+  .ident-capa{
+    background: #FF416C;
+    border-radius: 10px 10px 0 0;
+    display: block;
+    color: #FFF;
+    text-align: center;
+    padding: 3px;
+  }
+
+  .cancel-capa{
+    background: #FF4B2B;
+    border-radius: 0 0 10px 10px ;
+    display: block;
+    color: #FFF;
+    text-align: center;
+    padding: 3px;
+    cursor: pointer;
+  }
+
+  .btn-upload{
+    border-radius: 30px;
+    width: 200px;
+    background: #FF416C;
+    color:#FFF;
+    border:none;
+  }
+
+  .btn-upload:hover, .btn-upload:active, .btn-upload:focus{
+    background: #FF4B2B !important;
   }
 </style>

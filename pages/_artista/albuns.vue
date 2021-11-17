@@ -64,7 +64,7 @@ export default {
       if (cd) {
         const musicas = cd.musicas
 
-        if (Object.entries(musicas).length > 0) {
+        if (Array.from(musicas).length > 0) {
           this.$store.commit('reproduzindo/limpar')
 
           const publicidade = this.$store.state.publicidade.list.filter(c => parseInt(cd.id) === parseInt(c.cd_id))
@@ -116,7 +116,7 @@ export default {
           this.load = false
 
           const publicidade = r.data.publicidade
-          if (publicidade.length > 0) {
+          if (Array.from(publicidade).length > 0) {
             publicidade.forEach((p) => {
               // const store = this.$store.state.publicidade.list.find(a => parseInt(p.cd_id) === parseInt(a.cd_id))
               // if (!store) {

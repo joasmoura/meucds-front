@@ -29,7 +29,7 @@ export default {
   methods: {
     async getCds () {
       await this.$axios.get('usuario/cds').then((r) => {
-        const cds = r.data
+        const cds = Array.from(r.data)
         if (cds) {
           this.cds = cds
         }

@@ -4,7 +4,7 @@
 
   <b-container>
     <h3>Albuns do Artista </h3>
-    <b-row v-if="artista.cds && artista.cds.length">
+    <b-row v-if="artista && Array.from(artista.cds).length">
       <b-col v-for="(cd, key) in artista.cds" :key="cd.id" md="2" @mouseenter="ativaBotaoPlay(key)" @mouseleave="desativaBotaoPlay(key)" >
         <b-button :id="`cd-${key}`" class="botaoPlay" @click="ouvir(cd.id)" v-b-tooltip.hover title="Escutar">
           <b-icon icon="play-fill"></b-icon>
@@ -13,7 +13,7 @@
         <b-link :to="`${uri}/${cd.url}`">
           <b-card
             :title="titulos(cd.titulo)"
-            :img-src="cd.capa_mini"
+            :img-src="(cd.capa_mini ? cd.capa_mini : '/capa-cd.jpg')"
             :img-alt="cd.titulo"
             img-top
             tag="article"
@@ -22,7 +22,7 @@
           >
             <b-card-text>
               <div v-if="cd.musicas">
-                {{Object.entries(cd.musicas).length}} músicas
+                {{Array.from(cd.musicas).length}} músicas
               </div>
 
               <span v-else>0 músicas</span>
@@ -38,14 +38,17 @@
 <script>
 import HeaderArtista from '@/components/Artistas/header.vue'
 export default {
-  // asyncData ({ params }) {
-  //   const artista = params.artista
+  async asyncData ({ store, params }) {
+    const param = params.artista
+    let artista = await store.state.artista.list.find(a => param === a.url)
 
-  //   return { artista }
-  // },
+    if (!artista) {
+      artista = await store.dispatch('artista/getArtista', param)
+    }
+    return { artista }
+  },
   data () {
     return {
-      artista: [],
       uri: '',
       publicidade: null,
       cdAtual: null
@@ -56,7 +59,6 @@ export default {
   },
   created () {
     this.uri = this.$route.params.artista
-    this.getArtista()
   },
 
   methods: {
@@ -66,11 +68,11 @@ export default {
         this.cdAtual = cd
         const musicas = cd.musicas
 
-        if (Object.entries(musicas).length > 0) {
+        if (Array.from(musicas).length > 0) {
           this.$store.commit('reproduzindo/limpar')
 
           const publicidade = this.$store.state.publicidade.list.filter(c => parseInt(cd.id) === parseInt(c.cd_id))
-          if (publicidade.length) {
+          if (Array.from(publicidade).length) {
             publicidade.forEach((p) => {
               this.$store.commit('reproduzindo/add', {
                 id: p.id,
@@ -110,26 +112,29 @@ export default {
       })
     },
     async getArtista () {
-      const artista = await this.$store.state.artista.list.find(a => this.uri === a.url)
-      if (artista) {
-        this.artista = artista
-      } else {
-        await this.$axios.get(`artista/${this.uri}`).then((r) => {
-          this.$store.commit('artista/add', r.data.artista)
-          this.artista = r.data.artista
-          this.load = false
+      // await this.$store.dispatch('artista/getArtista', { uri: this.uri })
+      // const artista = await this.$store.state.artista.list.find(a => this.uri === a.url)
+      // if (artista) {
+      // this.artista = artista
+      // } else {
 
-          const publicidade = r.data.publicidade
-          if (publicidade.length > 0) {
-            publicidade.forEach((p) => {
-              this.$store.commit('publicidade/add', p)
-            })
-          }
-        }).catch((error) => {
-          console.log(error)
-          this.$router.push('/')
-        })
-      }
+      // await this.$axios.get(`artista/${this.uri}`).then((r) => {
+      //   this.$store.commit('artista/add', r.data.artista)
+      //   this.artista = r.data.artista
+
+      //   this.load = false
+
+      //   const publicidade = r.data.publicidade
+      //   if (Array.from(publicidade).length > 0) {
+      //     publicidade.forEach((p) => {
+      //       this.$store.commit('publicidade/add', p)
+      //     })
+      //   }
+      // }).catch((error) => {
+      //   console.log(error)
+      //   this.$router.push('/')
+      // })
+      // }
     },
     titulos (t) {
       if (t !== '') {

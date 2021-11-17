@@ -5,7 +5,7 @@
         <b-row class="w-100">
           <b-col md="4">
             <div class="flex-fill box-actions mt-2">
-              <b-img v-bind="mainProps" :src="currentAudio.capa" rounded alt="" />
+              <b-img v-bind="mainProps" :src="(currentAudio.capa ? currentAudio.capa : '/capa-cd.jpg')" rounded alt="" />
 
               <b-button @click="prev">
                 <b-icon icon="skip-start-fill"/>

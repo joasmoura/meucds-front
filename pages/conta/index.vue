@@ -1,28 +1,50 @@
 <template>
 <Acesso>
-  <div class="d-flex flex-row justify-items-center">
-    <h3>Cds</h3>
-    <b-button variant="link" class="ml-3" size="sm" to="/conta/cd/form"><b-icon icon="plus" /> cd</b-button>
+  <div class="d-flex flex-row justify-content-between justify-items-center">
+    <h3>Meus cds cadastrados</h3>
+    <b-button variant="primary" size="sm" to="/conta/cd/form"><b-icon icon="plus" /> cadastro</b-button>
   </div>
 
-  <b-row>
-    <b-col v-for="cd in cds" :key="cd.id" xs="12" md="3" sm="6">
-        <b-card
-          :title="cd.artista"
-          :img-src="cd.capa_mini"
-          img-alt=""
-          img-top
-          tag="article"
-          style=""
-          class="mb-2 item"
-        >
-          <span>{{cd.titulo}}</span>
-          <b-card-text class="d-flex p-0 m-0 mt-3">
-            <b-button :to="`conta/cd/${cd.id}`" size="sm" variant="primary" class="mr-2 w-50" title="Editar CD"><b-icon icon="pencil-square"/></b-button>
-            <b-button @click="remover(cd.id)" size="sm" variant="danger" class="w-50" title="Remover CD"><b-icon icon="trash"/></b-button>
-          </b-card-text>
-        </b-card>
+  <b-row class="my-3">
+    <b-col v-if="loading" md="12">
+      <b-skeleton-wrapper :loading="loading">
+        <template #loading>
+          <b-card>
+            <b-skeleton width="85%"></b-skeleton>
+            <b-skeleton width="55%"></b-skeleton>
+            <b-skeleton width="70%"></b-skeleton>
+          </b-card>
+        </template>
+      </b-skeleton-wrapper>
     </b-col>
+
+      <b-col v-for="cd in cds" :key="cd.id" xs="12" md="3" sm="6">
+          <b-card
+            :title="`${cd.artista}: ${cd.titulo}`"
+            :img-src="(cd.capa_mini ? cd.capa_mini : '/capa-cd.jpg')"
+            img-alt=""
+            img-top
+            tag="article"
+            style=""
+            class="mb-2 item"
+          >
+            <b-card-text class="p-0 m-0 mt-3">
+              <div class="d-flex justify-content-between">
+                <span>{{cd.num_download}} Downloads</span>
+                <span>{{cd.num_play}} Plays</span>
+              </div>
+
+              <div class="d-flex">
+                <b-button :to="`conta/cd/${cd.id}`" size="sm" variant="primary" class="mr-2 w-50" title="Editar CD"><b-icon icon="pencil-square"/></b-button>
+                <b-button @click="remover(cd.id)" size="sm" variant="danger" class="w-50" title="Remover CD"><b-icon icon="trash"/></b-button>
+              </div>
+            </b-card-text>
+
+            <template #footer>
+              <small class="text-muted">Cadastro em: {{cd.data_cadastro}}</small>
+            </template>
+          </b-card>
+      </b-col>
   </b-row>
 </Acesso>
 </template>
@@ -36,7 +58,8 @@ export default {
   components: { Acesso },
   data () {
     return {
-      cds: []
+      cds: [],
+      loading: true
     }
   },
   created () {
@@ -46,9 +69,12 @@ export default {
     async getCds () {
       await this.$axios.get('/cds').then((r) => {
         const cds = r.data
-        if (cds) {
+        if (Array.from(cds.data).length) {
           this.cds = cds.data
+        } else {
+          this.cds = []
         }
+        this.loading = false
       })
     },
 

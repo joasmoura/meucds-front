@@ -2,7 +2,7 @@
   <section class="d-block">
     <b-container fluid="lg">
       <loader :load="load" />
-      <b-link v-if="Object.entries(banner1).length > 0 " :to="`/${banner1.url}`">
+      <b-link v-if="Array.from(banner1).length > 0 " :to="`/${banner1.url}`">
         <b-card
           overlay
           :img-src="banner1.imagem"
@@ -103,7 +103,7 @@ export default {
         }).then((r) => {
           const banners = r.data
           console.log('banners', banners)
-          if (banners.length) {
+          if (Array.from(banners).length) {
             this.montarBanner(banners)
             // const banner1 = banners.find(b => parseInt(b.ordem) === 1)
             // const banner2 = banners.find(b => parseInt(b.ordem) === 2)

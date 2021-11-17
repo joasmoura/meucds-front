@@ -1,9 +1,8 @@
 <template>
-<div>
-  <h1>teste ca</h1>
-  <pingos-categoria path="/categoria/" />
-  <destaque-home categoria="" />
-</div>
+  <div>
+    <pingos-categoria path="/categoria/" />
+    <destaque-home categoria="" />
+  </div>
 </template>
 
 <script>

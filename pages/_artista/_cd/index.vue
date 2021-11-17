@@ -30,7 +30,7 @@ import HeaderArtista from '@/components/Artistas/header.vue'
 export default {
   data () {
     return {
-      artista: [],
+      artista: null,
       uri: '',
       cdAtual: null,
       uriArtista: '',
@@ -53,7 +53,7 @@ export default {
         this.$store.commit('reproduzindo/limpar')
 
         const publicidade = this.$store.state.publicidade.list.filter(c => parseInt(this.cdAtual.id) === parseInt(c.cd_id))
-        if (publicidade.length) {
+        if (Array.from(publicidade).length) {
           publicidade.forEach((p) => {
             this.$store.commit('reproduzindo/add', {
               id: p.id,
@@ -136,18 +136,18 @@ export default {
         await this.$axios.get(`artista/${this.uriArtista}`).then((r) => {
           this.$store.commit('artista/add', r.data.artista)
           this.artista = r.data.artista
-          this.load = false
           const cdAtual = this.artista.cds.find(cd => cd.url === this.uri)
           if (cdAtual) {
             this.cdAtual = cdAtual
 
             const publicidade = r.data.publicidade
-            if (publicidade.length > 0) {
+            if (Array.from(publicidade).length > 0) {
               publicidade.forEach((p) => {
                 this.$store.commit('publicidade/add', p)
               })
             }
           }
+          this.load = false
         }).catch((error) => {
           console.log(error)
           this.$router.push('/')

@@ -14,14 +14,14 @@
             <b-form-input size="sm" class="mr-sm-2 input-busca" placeholder="Faça uma busca"></b-form-input>
           </b-nav-form>
 
-          <!-- <b-nav-item to="/musicas-top" class="link-nav-topo" title="Músicas Top">Músicas</b-nav-item> -->
+          <b-nav-item to="/divulgadores" class="link-nav-topo" title="Divulgadores">Divulgadores</b-nav-item>
           <b-nav-item to="/artistas-top" class="link-nav-topo" title="Artistas">Artistas</b-nav-item>
           <b-nav-item to="/login" class="link-nav-topo" title="Acessar painel do usuário">Entrar</b-nav-item>
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->
-        <b-navbar-nav class="ml-auto" @click="upload">
-          <b-nav-item size="sm" class="btn btn-sm btn-success botao px-5 py-0" >Upload</b-nav-item>
+        <b-navbar-nav class="ml-auto">
+          <b-nav-item size="sm" class="btn btn-sm btn-success botao py-0" @click="upload" >Upload</b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-container>
@@ -124,7 +124,7 @@ export default {
     async getCategorias () {
       const url = this.$nuxt._route.path
       const categorias = this.$store.state.categorias.list
-      if (!categorias.length) {
+      if (!Array.from(categorias).length) {
         await this.$axios.get('categorias').then((r) => {
           const categorias = r.data
           if (categorias.length) {
@@ -179,7 +179,7 @@ export default {
   .input-busca{width: 500px !important; border-radius:5px;}
   .botao{background: #FF416C; border:none; border-radius:20px;}
   .botao:hover{background: #FF4B2B; }
-  .botao a{color:#FFF !important;}
+  .botao a{color:#FFF !important; padding-left: 4rem !important; padding-right: 4rem !important;}
 
   .btn-divulgue{color:#FFF !important;}
 

@@ -81,11 +81,11 @@ export default {
     },
     ouvir () {
       const musicas = this.cd.musicas
-      if (Object.entries(musicas).length > 0) {
+      if (Array.from(musicas).length > 0) {
         this.$store.commit('reproduzindo/limpar')
 
         const publicidade = this.$store.state.publicidade.list.filter(c => parseInt(this.cdAtual.id) === parseInt(c.cd_id))
-        if (publicidade.length) {
+        if (Array.from(publicidade).length) {
           publicidade.forEach((p) => {
             this.$store.commit('reproduzindo/add', {
               id: p.id,
