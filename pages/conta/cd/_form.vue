@@ -26,7 +26,7 @@
           <b-row>
             <b-col md="9">
               <b-row>
-                <b-col md="12">
+                <b-col v-if="$auth.user.tipo === 'D'" md="12">
                   <b-form-group label="Artista*" label-for="input-artista" >
                     <b-form-input id="input-artista" v-model="artista" type="text" />
                   </b-form-group>
@@ -310,7 +310,7 @@ export default {
       }
     },
     salvar () {
-      if (!this.titulo || !this.artista || !this.categoria) {
+      if ((this.$auth.user.tipo === 'D' && !this.artista) || !this.titulo || !this.categoria) {
         Swal.fire({
           title: 'Alerta',
           text: 'Os campos marcados com * são obrigatórios!',
@@ -333,7 +333,9 @@ export default {
         form.append('capa', this.capa)
       }
 
-      form.append('artista', this.artista)
+      if (this.$auth.user.tipo === 'D') {
+        form.append('artista', this.artista)
+      }
       form.append('titulo', this.titulo)
       form.append('youtube', this.youtube)
       form.append('descricao', this.descricao)
@@ -396,7 +398,31 @@ export default {
         })
       }
     },
-    removerMp3 (id) {
+    async removerMp3 (id) {
+      if (this.id) {
+        const musica = this.nomes[id]
+        if (musica) {
+          await this.$axios.get(`cds/remover-musica/${musica.id}`).then((r) => {
+            if (r.data.status) {
+              Swal.fire({
+                title: 'Sucesso',
+                text: 'Música removida',
+                timer: 1500,
+                icon: 'success'
+              })
+            } else {
+              Swal.fire({
+                title: 'Alerta',
+                text: 'Música não pode ser removida',
+                timer: 1500,
+                icon: 'warning'
+              })
+              return false
+            }
+          })
+        }
+      }
+
       this.nomes.splice(id, 1)
 
       const musicas = Array.from(this.musicas)
@@ -421,6 +447,9 @@ export default {
       reader.readAsDataURL(arquivo[0])
     },
     cancelCapa () {
+      if (this.id) {
+        this.$axios.get(`cds/remover-capa/${this.id}`)
+      }
       this.previewCapa = ''
       this.capa = ''
     },

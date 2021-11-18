@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-container fluid class="banner-artista">
+    <b-container fluid class="banner-artista" :style="(artista && !artista.banner ? 'height: 50px;' : '')">
       <b-container class="banner-artista-banner p-0">
         <b-img :src="(artista && artista.banner ? artista.banner : '')"/>
       </b-container>

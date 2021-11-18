@@ -81,9 +81,9 @@ export default {
         this.contaPlayCd()
       }
     },
-    baixarCd () {
+    async baixarCd () {
       this.baixando = true
-      this.$axios.get('/baixar-cd', {
+      await this.$axios.get('/baixar-cd', {
         params: {
           artista: this.artista.url,
           cd: this.cdAtual.url
@@ -96,8 +96,8 @@ export default {
         link.download = this.cdAtual.titulo + '.zip'
         link.click()
         URL.revokeObjectURL(link.href)
-        this.baixando = false
         this.contaDownloadCd()
+        this.baixando = false
       }).catch(() => {
         this.baixando = false
         alert('Algo deu errado ao baixar este CD!')
@@ -113,8 +113,8 @@ export default {
         console.log('erro')
       })
     },
-    contaPlayCd () {
-      this.$axios.get(`conta-play-cd/${this.cdAtual.id}`).then((r) => {
+    async contaPlayCd () {
+      await this.$axios.get(`conta-play-cd/${this.cdAtual.id}`).then((r) => {
         const numPlays = r.data
         if (numPlays) {
           this.$store.commit('artista/setPlaysCd', { cd: this.cdAtual, numPlays })
@@ -127,31 +127,25 @@ export default {
       const artista = await this.$store.state.artista.list.find(a => this.uriArtista === a.url)
       if (artista) {
         this.artista = artista
-
         const cdAtual = artista.cds.find(cd => cd.url === this.uri)
         if (cdAtual) {
           this.cdAtual = cdAtual
         }
       } else {
-        await this.$axios.get(`artista/${this.uriArtista}`).then((r) => {
-          this.$store.commit('artista/add', r.data.artista)
-          this.artista = r.data.artista
-          const cdAtual = this.artista.cds.find(cd => cd.url === this.uri)
-          if (cdAtual) {
-            this.cdAtual = cdAtual
+        const data = await this.$store.dispatch('artista/getArtista', { uri: this.uriArtista })
+        if (data.artista) {
+          this.artista = data.artista
+        }
 
-            const publicidade = r.data.publicidade
-            if (Array.from(publicidade).length > 0) {
-              publicidade.forEach((p) => {
-                this.$store.commit('publicidade/add', p)
-              })
-            }
+        const cdAtual = this.artista.cds.find(cd => cd.url === this.uri)
+        if (cdAtual) {
+          this.cdAtual = cdAtual
+          if (Array.from(data.publicidade).length > 0) {
+            data.publicidade.forEach((p) => {
+              this.$store.commit('publicidade/add', p)
+            })
           }
-          this.load = false
-        }).catch((error) => {
-          console.log(error)
-          this.$router.push('/')
-        })
+        }
       }
     },
     renderNumero (key) {

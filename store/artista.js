@@ -31,11 +31,11 @@ export const mutations = {
 }
 
 export const actions = {
-  getArtista ({ commit }, uri) {
+  getArtista ({ commit }, { uri }) {
     return this.$axios.get(`artista/${uri}`).then((r) => {
       if (r.data) {
         commit('add', r.data.artista)
-        return r.data.artista
+        return r.data
       }
     })
   }

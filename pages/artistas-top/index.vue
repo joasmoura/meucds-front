@@ -1,8 +1,8 @@
 <template>
   <b-container>
+    <h1 class="titulo">Artistas top</h1>
     <pingos-categoria path="/artistas-top/" />
-    <artistas />
-
+    <artistas tipo="artistas"/>
   </b-container>
 </template>
 

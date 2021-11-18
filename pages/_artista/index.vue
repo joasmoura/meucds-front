@@ -3,7 +3,7 @@
   <headerArtista :artista="artista" />
 
   <b-container>
-    <h3>Albuns do Artista </h3>
+    <h3>Albuns do {{(artista && artista.tipo === 'A' ? 'Artista' : 'Divulgador')}}</h3>
     <b-row v-if="artista && Array.from(artista.cds).length">
       <b-col v-for="(cd, key) in artista.cds" :key="cd.id" md="2" @mouseenter="ativaBotaoPlay(key)" @mouseleave="desativaBotaoPlay(key)" >
         <b-button :id="`cd-${key}`" class="botaoPlay" @click="ouvir(cd.id)" v-b-tooltip.hover title="Escutar">
@@ -38,17 +38,18 @@
 <script>
 import HeaderArtista from '@/components/Artistas/header.vue'
 export default {
-  async asyncData ({ store, params }) {
-    const param = params.artista
-    let artista = await store.state.artista.list.find(a => param === a.url)
+  // async asyncData ({ store, params }) {
+  //   const param = params.artista
+  //   let artista = store.state.artista.list.find(a => param === a.url)
 
-    if (!artista) {
-      artista = await store.dispatch('artista/getArtista', param)
-    }
-    return { artista }
-  },
+  //   if (!artista) {
+  //     artista = await store.dispatch('artista/getArtista', param)
+  //   }
+  //   return { artista }
+  // },
   data () {
     return {
+      artista: null,
       uri: '',
       publicidade: null,
       cdAtual: null
@@ -59,6 +60,7 @@ export default {
   },
   created () {
     this.uri = this.$route.params.artista
+    this.getArtista()
   },
 
   methods: {
@@ -112,29 +114,21 @@ export default {
       })
     },
     async getArtista () {
-      // await this.$store.dispatch('artista/getArtista', { uri: this.uri })
-      // const artista = await this.$store.state.artista.list.find(a => this.uri === a.url)
-      // if (artista) {
-      // this.artista = artista
-      // } else {
+      const artista = await this.$store.state.artista.list.find(a => this.uri === a.url)
+      if (artista) {
+        this.artista = artista
+      } else {
+        const data = await this.$store.dispatch('artista/getArtista', { uri: this.uri })
+        if (data.artista) {
+          this.artista = data.artista
+        }
 
-      // await this.$axios.get(`artista/${this.uri}`).then((r) => {
-      //   this.$store.commit('artista/add', r.data.artista)
-      //   this.artista = r.data.artista
-
-      //   this.load = false
-
-      //   const publicidade = r.data.publicidade
-      //   if (Array.from(publicidade).length > 0) {
-      //     publicidade.forEach((p) => {
-      //       this.$store.commit('publicidade/add', p)
-      //     })
-      //   }
-      // }).catch((error) => {
-      //   console.log(error)
-      //   this.$router.push('/')
-      // })
-      // }
+        if (Array.from(data.publicidade).length > 0) {
+          data.publicidade.forEach((p) => {
+            this.$store.commit('publicidade/add', p)
+          })
+        }
+      }
     },
     titulos (t) {
       if (t !== '') {

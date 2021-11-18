@@ -17,8 +17,6 @@
                 <b-card-text>
                   <b-avatar :src="artista.foto" size="6rem" :alt="`Artista ${artista.nome}`"></b-avatar>
                 </b-card-text>
-
-                <!--Botões aqui-->
               </b-card>
             </b-link>
           </b-col>
@@ -47,7 +45,7 @@ export default {
       load: false
     }
   },
-  props: ['categoria', 'letra'],
+  props: ['categoria', 'letra', 'tipo'],
   watch: {
     currentPage (val) {
       this.getArtistas()
@@ -63,7 +61,7 @@ export default {
     async getArtistas () {
       this.load = true
       this.scrollTop()
-      await this.$axios.get(`${(this.letra ? `/artistas-letra/${this.letra.toLowerCase()}` : 'artistas')}?page=${(this.$route.query.page ? this.$route.query.page : 1)}`, {
+      await this.$axios.get(`${(this.letra ? `/artistas-letra/${this.letra.toLowerCase()}` : (this.tipo === 'artistas' ? 'artistas' : 'divulgadores'))}?page=${(this.$route.query.page ? this.$route.query.page : 1)}`, {
         params: {
           categoria: this.categoria
         }
