@@ -2,7 +2,10 @@
 <Acesso>
   <div class="d-flex flex-row justify-content-between justify-items-center">
       <h3>{{id ? 'Editar CD' : 'Cadastrar CD'}}</h3>
-      <b-button to="/conta" variant="link"><b-icon icon="arrow-left" /> Voltar</b-button>
+      <div>
+        <b-button to="/conta" variant="link"><b-icon icon="arrow-left" /> Voltar</b-button>
+        <b-button v-if="id" variant="primary" size="sm" to="/conta/cd/form"><b-icon icon="plus" /> cd</b-button>
+      </div>
   </div>
 
   <b-form @submit.prevent="salvar" class=" mb-5">
@@ -18,6 +21,15 @@
             <Upload v-for="(n, key) in nomes" :key="key" :i="key" v-on:remover="(k) => removerMp3(k)" :remover="true">
               <template v-slot:numero>{{montaNumero(key)}}</template>
               <template v-slot:input><input type="text" class="form-control" v-model="n.nome" placeholder="Título"></template>
+              <template v-slot:letra>
+                <editor
+                  api-key="no-api-key"
+                  v-model="n.letra"
+                  :init="{
+                    menubar: false
+                  }"
+                />
+              </template>
             </Upload>
           </div>
         </b-tab>
@@ -28,13 +40,13 @@
               <b-row>
                 <b-col v-if="$auth.user.tipo === 'D'" md="12">
                   <b-form-group label="Artista*" label-for="input-artista" >
-                    <b-form-input id="input-artista" v-model="artista" type="text" />
+                    <b-form-input :readonly="id !== ''" id="input-artista" v-model="artista" type="text" />
                   </b-form-group>
                 </b-col>
 
                 <b-col md="12">
                   <b-form-group label="Títtulo do cd*" label-for="input-nome" >
-                    <b-form-input id="input-nome" v-model="titulo" type="text" />
+                    <b-form-input :readonly="id !== ''" id="input-nome" v-model="titulo" type="text" />
                   </b-form-group>
                 </b-col>
 
@@ -105,13 +117,13 @@
                         <b-row>
                           <b-col md=12 class="infoPublicacao">A publicação ficará privada até a data e horário escolhidos.</b-col>
                           <b-col md="6">
-                            <b-form-group label="Data para publicação" label-for="input-data-publicacao" >
+                            <b-form-group label="Data para publicação*" label-for="input-data-publicacao" >
                               <b-form-input id="input-data-publicacao" v-model="dataPublicacao" type="date" />
                             </b-form-group>
                           </b-col>
 
                           <b-col md="6">
-                            <b-form-group label="Hora para publicação" label-for="input-hora-publicacao" >
+                            <b-form-group label="Hora para publicação*" label-for="input-hora-publicacao" >
                               <b-form-input id="input-hora-publicacao" v-model="horaPublicacao" type="time" />
                             </b-form-group>
                           </b-col>
@@ -124,7 +136,7 @@
             </b-col>
 
             <b-col md="3">
-              <span class="ident-capa">Capa</span>
+              <span class="ident-capa">Capa <sub>500x500</sub></span>
               <b-card
                 title=""
                 :img-src="(previewCapa ? previewCapa : '/capa-cd.jpg')"
@@ -163,6 +175,7 @@
     <!-- Control buttons-->
     <div class="text-center">
       <b-button-group class="mt-2">
+        <b-button @click="tabIndex = 0" v-if="(nomes.length && tabIndex > 0)" class="btn-upload">MÚSICAS</b-button>
         <b-button @click="proximo" v-if="tabIndex === 0" class="btn-upload">PRÓXIMO</b-button>
         <b-overlay
             :show="salvando"
@@ -182,6 +195,7 @@
 
 <script>
 import Swal from 'sweetalert2'
+import Editor from '@tinymce/tinymce-vue'
 import Acesso from '@/components/Acesso'
 import Upload from '@/components/Acesso/Upload'
 
@@ -196,7 +210,6 @@ export default {
       musicas: [],
       mp3: [],
       nomes: [],
-      form: [],
       descricao: '',
       categorias: [],
       categoria: '',
@@ -217,10 +230,11 @@ export default {
       youtube: '',
       capa: '',
       previewCapa: '',
-      salvando: false
+      salvando: false,
+      form: null
     }
   },
-  components: { Acesso, Upload },
+  components: { Acesso, Upload, Editor },
   created () {
     this.getCantores()
     this.getCategorias()
@@ -262,7 +276,8 @@ export default {
             this.nomes = cd.musicas.map((m) => {
               return {
                 id: m.id,
-                nome: m.nome.replace('.mp3', '').replace('.MP3', '')
+                nome: m.nome.replace('.mp3', '').replace('.MP3', ''),
+                letra: m.letra
               }
             })
           }
@@ -316,63 +331,117 @@ export default {
           text: 'Os campos marcados com * são obrigatórios!',
           icon: 'warning'
         })
-
         return
       }
 
       this.salvando = true
+
+      this.form = new FormData()
+
+      if (this.capa) {
+        this.form.append('capa', this.capa)
+      }
+
+      if (this.$auth.user.tipo === 'D') {
+        this.form.append('artista', this.artista)
+      }
+
+      if (this.id) {
+        this.form.append('id', this.id)
+      }
+      this.form.append('titulo', this.titulo)
+      this.form.append('youtube', this.youtube)
+      this.form.append('descricao', this.descricao)
+      this.form.append('categoria', this.categoria)
+      this.form.append('publicacao', this.publicacao)
+      this.form.append('tipo_publicacao', this.tipoPublicacao)
+      this.form.append('data_publicacao', this.dataPublicacao)
+      this.form.append('hora_publicacao', this.horaPublicacao)
+
       if (this.id) {
         this.atualizar()
       } else {
         this.criar()
       }
     },
-    criar () {
-      const form = new FormData()
-      if (this.capa) {
-        form.append('capa', this.capa)
-      }
-
-      if (this.$auth.user.tipo === 'D') {
-        form.append('artista', this.artista)
-      }
-      form.append('titulo', this.titulo)
-      form.append('youtube', this.youtube)
-      form.append('descricao', this.descricao)
-      form.append('categoria', this.categoria)
-      form.append('publicacao', this.publicacao)
-      form.append('tipo_publicacao', this.tipoPublicacao)
-      form.append('data_publicacao', this.dataPublicacao)
-      form.append('hora_publicacao', this.horaPublicacao)
-
-      this.$axios.post('cds', form).then((r) => {
+    async criar () {
+      await this.$axios.post('cds', this.form).then((r) => {
         const cd = r.data
         if (cd.status) {
           this.upload(cd.cd.id)
         }
+      }).catch((e) => {
+        const erros = e.response.data
+        if (erros) {
+          for (const erro in erros.errors) {
+            this.alertaErro(erros.errors[erro][0])
+          }
+        }
+        this.salvando = false
       })
     },
-    atualizar () {
-
+    async atualizar () {
+      const musicas = this.nomes.filter(m => m.id !== null)
+      if (musicas.length) {
+        musicas.forEach((m, i) => {
+          this.form.append(`musicas[${i}][id]`, m.id)
+          this.form.append(`musicas[${i}][nome]`, m.nome)
+          this.form.append(`musicas[${i}][letra]`, m.letra)
+        })
+      }
+      await this.$axios.post(`cds/${this.id}`, this.form, {
+        params: {
+          _method: 'PUT'
+        }
+      }).then((r) => {
+        const cd = r.data
+        if (cd.status) {
+          if (this.musicas.length) {
+            this.upload(this.id)
+          } else {
+            Swal.fire({
+              text: 'Cd salvo com sucesso!',
+              icon: 'success',
+              timer: 1500
+            })
+            this.salvando = false
+          }
+        }
+      }).catch((e) => {
+        const erros = e.response.data
+        if (erros) {
+          for (const erro in erros.errors) {
+            this.alertaErro(erros.errors[erro][0])
+          }
+        }
+        this.salvando = false
+      })
     },
     async upload (cdId) {
+      const nomes = this.nomes.filter(m => !m.id)
       if (this.musicas.length) {
         this.tabIndex++
         for (let i = 0; i < this.musicas.length; i++) {
           const form = new FormData()
           form.append('musica', this.musicas[i])
-          form.append('titulo', this.nomes[i].nome)
+          form.append('titulo', nomes[i].nome)
+          form.append('letra', nomes[i].letra)
 
           await this.$axios.post(`cds/upload/${cdId}`, form, {
             onUploadProgress: (u) => {
-              this.nomes[i].progress = Math.round(u.loaded * 100 / u.total)
+              nomes[i].progress = Math.round(u.loaded * 100 / u.total)
             }
           }).then(() => {
             if (i === (this.musicas.length - 1)) {
               Swal.fire({
-                text: 'Cd cadastrado com sucesso!',
-                icon: 'success'
+                text: 'Cd salvo com sucesso!',
+                icon: 'success',
+                timer: 1500
               })
+              if (this.$route.params.form !== 'form') {
+                this.getCd()
+                this.tabIndex = 1
+              }
               this.$router.push(`/conta/cd/${cdId}`)
             }
           }).catch((e) => {
@@ -393,6 +462,7 @@ export default {
           this.musicas.push(m)
           this.nomes.push({
             nome: m.name.replace('.mp3', ''),
+            letra: '',
             progress: 0
           })
         })
@@ -456,6 +526,13 @@ export default {
     montaNumero (n) {
       const numero = n + 1
       return numero
+    },
+    alertaErro (erro) {
+      Swal.fire({
+        title: 'Alerta',
+        text: erro,
+        icon: 'warning'
+      })
     }
   }
 }
@@ -587,7 +664,7 @@ export default {
   }
 
   .btn-upload{
-    border-radius: 30px;
+    border-radius: 0;
     width: 200px;
     background: #FF416C;
     color:#FFF;

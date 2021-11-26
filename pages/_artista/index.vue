@@ -4,7 +4,7 @@
 
   <b-container>
     <h3>Albuns do {{(artista && artista.tipo === 'A' ? 'Artista' : 'Divulgador')}}</h3>
-    <b-row v-if="artista && Array.from(artista.cds).length">
+    <b-row v-if="artista && artista.cds && Array.from(artista.cds).length">
       <b-col v-for="(cd, key) in artista.cds" :key="cd.id" md="2" @mouseenter="ativaBotaoPlay(key)" @mouseleave="desativaBotaoPlay(key)" >
         <b-button :id="`cd-${key}`" class="botaoPlay" @click="ouvir(cd.id)" v-b-tooltip.hover title="Escutar">
           <b-icon icon="play-fill"></b-icon>

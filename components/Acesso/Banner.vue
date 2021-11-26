@@ -16,7 +16,7 @@
       v-if="!srcBanner"
       @click="selecionarBanner"
       title="Alterar Banner"
-      class="button-banner"><b-icon icon="pencil-square"></b-icon></b-button>
+      class="button-banner"><b-icon icon="pencil-square"></b-icon> <span>1900x240</span></b-button>
 
       <b-button
       pill
@@ -41,6 +41,7 @@
   <div class="box-foto position-relative">
     <label for="foto" style="cursor: pointer;">
       <b-avatar size="72px" :src="(previewFoto ? previewFoto : ($auth.user.foto ? $auth.user.foto : ''))" class="avatar"></b-avatar>
+      <sub>200x200</sub>
     </label>
     <input type="file" id="foto" class="d-none" @change="carregaFoto">
 
@@ -97,7 +98,12 @@ export default {
             })
           }
         }).catch((e) => {
-
+          const erros = e.response.data
+          if (erros) {
+            for (const erro in erros.errors) {
+              this.alertaErro(erros.errors[erro][0])
+            }
+          }
         })
       } else {
         alert('Nenhuma Imagem foi selecionada ainda!')
@@ -118,7 +124,12 @@ export default {
             })
           }
         }).catch((e) => {
-
+          const erros = e.response.data
+          if (erros) {
+            for (const erro in erros.errors) {
+              this.alertaErro(erros.errors[erro][0])
+            }
+          }
         })
       } else {
         alert('Nenhuma Imagem foi selecionada ainda!')
@@ -159,6 +170,13 @@ export default {
     cancelarEdicaoFoto () {
       this.previewFoto = ''
       this.srcFoto = ''
+    },
+    alertaErro (erro) {
+      Swal.fire({
+        title: 'Alerta',
+        text: erro,
+        icon: 'warning'
+      })
     }
   }
 }
@@ -169,14 +187,12 @@ export default {
   margin-top: 10px;
   background: #f2f2f2;
   min-height: 100px;
-  max-height: 250px;
+  max-height: 180px;
   position:relative;
 }
 
 .banner_conta img{
-  /* height: 250px; */
-  height:250px;
-  object-fit: cover;
+  height:100%;
 }
 
 .banner_conta .button-banner{

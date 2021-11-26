@@ -2,7 +2,9 @@
 <Acesso>
   <div class="d-flex flex-row justify-content-between justify-items-center">
     <h3>Meus cds cadastrados</h3>
-    <b-button variant="primary" size="sm" to="/conta/cd/form"><b-icon icon="plus" /> cadastro</b-button>
+    <div>
+      <b-button variant="primary" size="sm" to="/conta/cd/form"><b-icon icon="plus" /> cd</b-button>
+    </div>
   </div>
 
   <b-row class="my-3">
@@ -20,7 +22,7 @@
 
       <b-col v-for="cd in cds" :key="cd.id" xs="12" md="3" sm="6">
           <b-card
-            :title="`${cd.artista}: ${cd.titulo}`"
+            :title="`${($auth.user.tipo === 'D' ? cd.artista + ':' : '')} ${cd.titulo}`"
             :img-src="(cd.capa_mini ? cd.capa_mini : '/capa-cd.jpg')"
             img-alt=""
             img-top
@@ -30,8 +32,8 @@
           >
             <b-card-text class="p-0 m-0 mt-3">
               <div class="d-flex justify-content-between">
-                <span>{{cd.num_download}} Downloads</span>
-                <span>{{cd.num_play}} Plays</span>
+                <span>{{cd.num_downloads}} Downloads</span>
+                <span>{{cd.num_plays}} Plays</span>
               </div>
 
               <div class="d-flex">

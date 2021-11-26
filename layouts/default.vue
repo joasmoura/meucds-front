@@ -16,12 +16,13 @@
 
           <b-nav-item to="/divulgadores" class="link-nav-topo" title="Divulgadores">Divulgadores</b-nav-item>
           <b-nav-item to="/artistas-top" class="link-nav-topo" title="Artistas">Artistas</b-nav-item>
-          <b-nav-item to="/login" class="link-nav-topo" title="Acessar painel do usuário">Entrar</b-nav-item>
+          <b-nav-item v-if="!$auth.loggedIn" to="/login" class="link-nav-topo" title="Acessar painel do usuário">Entrar</b-nav-item>
+          <b-nav-item v-if="$auth.loggedIn" to="/conta" class="link-nav-topo d-flex flex-row" title="Área"><b-avatar class="mr-1" size="2em" :src="$auth.user.foto"></b-avatar> <span>{{$auth.user.name}}</span></b-nav-item>
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
-          <b-nav-item size="sm" class="btn btn-sm btn-success botao py-0" @click="upload" >Upload</b-nav-item>
+          <b-nav-item class="btn btn-sm btn-success botao py-0" @click="upload" >Upload</b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-container>
@@ -179,7 +180,7 @@ export default {
   .input-busca{width: 500px !important; border-radius:5px;}
   .botao{background: #FF416C; border:none; border-radius:20px;}
   .botao:hover{background: #FF4B2B; }
-  .botao a{color:#FFF !important; padding-left: 4rem !important; padding-right: 4rem !important;}
+  .botao a{color:#FFF !important; padding-left: 30px !important; padding-right: 30px !important;}
 
   .btn-divulgue{color:#FFF !important;}
 

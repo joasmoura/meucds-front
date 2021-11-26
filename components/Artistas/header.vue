@@ -1,9 +1,9 @@
 <template>
   <div>
-    <b-container fluid class="banner-artista" :style="(artista && !artista.banner ? 'height: 50px;' : '')">
-      <b-container class="banner-artista-banner p-0">
-        <b-img :src="(artista && artista.banner ? artista.banner : '')"/>
-      </b-container>
+    <b-container fluid class="banner-artista p-0">
+        <b-img v-if="artista && artista.banner" :src="(artista && artista.banner ? artista.banner : '')"/>
+      <!-- <b-container class="banner-artista-banner p-0">
+      </b-container> -->
     </b-container>
 
     <b-container class="infos-artista p-5 d-md-flex flex-row justify-content-between">
@@ -36,7 +36,7 @@
         </div>
 
         <div>
-          <h4 class="num-dado">{{(cd ? cd.num_download : contarDownloads())}}</h4>
+          <h4 class="num-dado">{{contarDownloads()}}</h4>
           <span class="nome-dado">Downloads</span>
         </div>
       </div>
@@ -50,9 +50,13 @@ export default {
   methods: {
     contarDownloads () {
       let num = 0
-      if ((this.artista !== null && this.artista !== 'undefined') && Array.from(this.artista.cds).length) {
+      if (this.cd) {
+        return this.cd.num_downloads
+      } else if ((this.artista !== null &&
+        this.artista !== 'undefined') &&
+        this.artista.cds && Array.from(this.artista.cds).length) {
         this.artista.cds.forEach((a) => {
-          num += parseInt(a.num_download)
+          num += parseInt(a.num_downloads)
         })
       }
       return num
@@ -60,12 +64,12 @@ export default {
     contarPlays () {
       let num = 0
       if (this.cd) {
-        return this.cd.num_play
+        return this.cd.num_plays
       } else if ((this.artista !== null &&
-       this.artista !== 'undefined') &&
+       this.artista !== 'undefined') && this.artista.cds &&
        Array.from(this.artista.cds).length) {
         this.artista.cds.forEach((a) => {
-          num += parseInt(a.num_play)
+          num += parseInt(a.num_plays)
         })
       }
       return num
@@ -76,7 +80,8 @@ export default {
 
 <style>
   .banner-artista{
-    height: 230px;
+    min-height: 100px;
+    max-height: 240px;
     background: orange;
     text-align: center;
     z-index: -1;
@@ -92,7 +97,6 @@ export default {
 
   .infos-artista{
     position: relative;
-    margin-top: -30px;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 0 .5em #ccc;
@@ -113,6 +117,12 @@ export default {
   .infos-artista .nome-dado{
     font-size: 15px;
     color: #00C5A2;
+  }
+
+  @media (min-width: 600px) {
+    .infos-artista{
+      margin-top: -20px !important;
+    }
   }
 
 </style>

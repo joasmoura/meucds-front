@@ -1447,6 +1447,11 @@
     "estree-walker" "^2.0.1"
     "picomatch" "^2.2.2"
 
+"@tinymce/tinymce-vue@^3.2.8":
+  "integrity" "sha512-jEz+NZ0g+FZFz273OEUWz9QkwPMyjc5AJYyxOgu51O1Y5UaJ/6IUddXTX6A20mwCleEv5ebwNYdalviafx4fnA=="
+  "resolved" "https://registry.npmjs.org/@tinymce/tinymce-vue/-/tinymce-vue-3.2.8.tgz"
+  "version" "3.2.8"
+
 "@types/eslint@^7.2.6":
   "integrity" "sha512-07XlgzX0YJUn4iG1ocY4IX9DzKSmMGUs6ESKlxWhZRaa0fatIWaHWUVapcuGa8r5HFnTqzj+4OCjd5f7EZ/i/A=="
   "resolved" "https://registry.npmjs.org/@types/eslint/-/eslint-7.28.0.tgz"
@@ -1687,7 +1692,6 @@
     "merge-source-map" "^1.1.0"
     "postcss" "^7.0.36"
     "postcss-selector-parser" "^6.0.2"
-    "prettier" "^1.18.2"
     "source-map" "~0.6.1"
     "vue-template-es2015-compiler" "^1.9.0"
   optionalDependencies:
@@ -2702,7 +2706,6 @@
     "anymatch" "^2.0.0"
     "async-each" "^1.0.1"
     "braces" "^2.3.2"
-    "fsevents" "^1.2.7"
     "glob-parent" "^3.1.0"
     "inherits" "^2.0.3"
     "is-binary-path" "^1.0.0"
@@ -2721,7 +2724,6 @@
   dependencies:
     "anymatch" "~3.1.2"
     "braces" "~3.0.2"
-    "fsevents" "~2.3.2"
     "glob-parent" "~5.1.2"
     "is-binary-path" "~2.1.0"
     "is-glob" "~4.0.1"
@@ -5447,8 +5449,6 @@
   "integrity" "sha1-h3Gq4HmbZAdrdmQPygWPnBDjPss="
   "resolved" "https://registry.npmjs.org/jsonfile/-/jsonfile-4.0.0.tgz"
   "version" "4.0.0"
-  dependencies:
-    "graceful-fs" "^4.1.6"
   optionalDependencies:
     "graceful-fs" "^4.1.6"
 
@@ -5457,7 +5457,6 @@
   "resolved" "https://registry.npmjs.org/jsonfile/-/jsonfile-6.1.0.tgz"
   "version" "6.1.0"
   dependencies:
-    "graceful-fs" "^4.1.6"
     "universalify" "^2.0.0"
   optionalDependencies:
     "graceful-fs" "^4.1.6"
@@ -9270,7 +9269,7 @@
   "resolved" "https://registry.npmjs.org/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz"
   "version" "1.9.1"
 
-"vue@*", "vue@^2", "vue@^2.0.0", "vue@^2.5.18", "vue@^2.6.12", "vue@>= 2.5 < 3":
+"vue@*", "vue@^2", "vue@^2.0.0", "vue@^2.4.3", "vue@^2.5.18", "vue@^2.6.12", "vue@>= 2.5 < 3":
   "integrity" "sha512-x2284lgYvjOMj3Za7kqzRcUSxBboHqtgRE2zlos1qWaOye5yUmHn42LB1250NJBLRwEcdrB0JRwyPTEPhfQjiQ=="
   "resolved" "https://registry.npmjs.org/vue/-/vue-2.6.14.tgz"
   "version" "2.6.14"
@@ -9292,10 +9291,8 @@
   "resolved" "https://registry.npmjs.org/watchpack/-/watchpack-1.7.5.tgz"
   "version" "1.7.5"
   dependencies:
-    "chokidar" "^3.4.1"
     "graceful-fs" "^4.1.2"
     "neo-async" "^2.5.0"
-    "watchpack-chokidar2" "^2.0.1"
   optionalDependencies:
     "chokidar" "^3.4.1"
     "watchpack-chokidar2" "^2.0.1"
